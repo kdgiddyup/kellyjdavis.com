@@ -45,32 +45,29 @@ Steps I took:
 
 ## Steps for downstream dev
 
-**Prerequisites:** If not already installed, install Nodejs, then use npm to globally install live-server and gulp.
+**Prerequisites:**
 
-For general project set-up:
+1.  if not already installed, install Nodejs, then globally install live-server and gulp: `npm i live-server gulp -g`
+2.  clone this repo into your own "js dev template" directory: `https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git`
 
-1.  create project directory and clone into it this repo: `https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git`
-2.  copy package.json from this sample set-up into project root
-3.  change project name in package.json to match project
-4.  copy .babelrc file from this sample set-up into project root
-5.  run `npm install`
-6.  at semantic-ui set-up prompt, choose "Custom" option and assert that the base directory should be `semantic/` and the output directories should be as shown below under **Semantic UI output directories**
-7.  from resulting /semantic directory, remove gulpfile.js and /tasks directory into project root
-8.  edit semantic.json to set `autoInstall` property to `true`
-9.  copy webpack.config.js from this sample set-up into project root
-10. copy index.html from this sample set-up into dist
-11. copy index.js from this sample set-up into src/js
-12. run `npm run build-all`
-13. run `npm run serve` to set up development server
-    code in index.html and index.js
+**New project set-up:**
+
+1.  create a new project directory and copy the files from your template directory into it. If you'll be pushing into source control, now's a good time to run `git init`
+2.  in the `package.json` file copied from your template directory, change `name`, `description`, `author`, `version` and `license` properties to reflect your project.
+3.  run `npm install`
+4.  if there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Choose the `Custom` option. Use the defaults for most things, but be sure the base directory is `semantic/` and set the output directories to what is shown below under **Semantic UI output directories**
+5.  from the resulting `/semantic` directory, move `gulpfile.js` and `/tasks` directory into project root
+6.  edit `semantic.json` to set `autoInstall` property to `true`
+7.  run `npm run build-all` to compile initial project files
+8.  run `npm run serve` to set up watchers on semantic and webpack files, and to launch a development server and view project in browser. Whenever you save changes to your project files, they should be automatically re-compiled and the browser will refresh for you. Nice!
 
 ### Semantic UI output directories
 
 ```javascript
-        "packaged": "./../dist/semantic/",
-        "uncompressed": "./../dist/semantic/components/",
-        "compressed": "./../dist/semantic/components/",
-        "themes": "./../dist/semantic/themes/"
+"packaged": "./../dist/semantic/",
+"uncompressed": "./../dist/semantic/components/",
+"compressed": "./../dist/semantic/components/",
+"themes": "./../dist/semantic/themes/"
 ```
 
 semantic.json should look like:
