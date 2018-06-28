@@ -49,7 +49,7 @@ Steps I took:
 
 For general project set-up:
 
-1.  create project directory
+1.  create project directory and clone into it this repo: `https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git`
 2.  copy package.json from this sample set-up into project root
 3.  change project name in package.json to match project
 4.  copy .babelrc file from this sample set-up into project root
