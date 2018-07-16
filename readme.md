@@ -6,16 +6,15 @@ If not already installed, install Nodejs, then globally install live-server and 
 
 ### Steps
 
-1.  run `git clone https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git project-name`
+1.  whatever you call it, cd into your "projects" directory and run `git clone https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git project-name`
 1.  run `cd project-name && rm -rf .git && git init`
 1.  in `package.json` change `name`, `description`, `author`, `version` and `license` properties to reflect your project.
 1.  run `npm install`
-1.  if there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Choose the `Custom` option. Use the defaults for most things, but be sure the base directory is `semantic/` and set the output directories to what is shown below:
+1.  if there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Choose the `Custom` option. Use the defaults for most things (that is, just hit 'Enter'), but be sure the base directory is `semantic/` and set the output directories to what is shown below:
     ```javascript
     Where should we output a packaged version?: "./../dist/semantic/",
     Where should we output compressed components?: "./../dist/semantic/components/",
-    Where should we output uncompressed components?: "./../dist/semantic/components/",
-    "themes": "./../dist/semantic/themes/"
+    Where should we output uncompressed components?: "./../dist/semantic/components/"
     ```
 1.  from the resulting `/semantic` directory, move `gulpfile.js` and `/tasks` directory into the root of `project-name`
 1.  edit `semantic.json` to make the following edits:
