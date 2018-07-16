@@ -48,51 +48,51 @@ Steps I took:
 **Prerequisites:**
 
 1.  if not already installed, install Nodejs, then globally install live-server and gulp: `npm i live-server gulp -g`
-2.  clone this repo into your own "js dev template" directory: `https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git`
 
 **New project set-up:**
 
-1.  create a new project directory and copy the files from your template directory into it. If you'll be pushing into source control, now's a good time to run `git init`
-2.  in the `package.json` file copied from your template directory, change `name`, `description`, `author`, `version` and `license` properties to reflect your project.
+1.  run `git clone https://dgtlmkt.git.beanstalkapp.com/jsdevtemplate.git project-name`
+1.  run `cd project-name && rm -rf .git && git init`
+2.  in `package.json` change `name`, `description`, `author`, `version` and `license` properties to reflect your project.
 3.  run `npm install`
-4.  if there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Choose the `Custom` option. Use the defaults for most things, but be sure the base directory is `semantic/` and set the output directories to what is shown below under **Semantic UI output directories**
-5.  from the resulting `/semantic` directory, move `gulpfile.js` and `/tasks` directory into project root
-6.  edit `semantic.json` to set `autoInstall` property to `true`
+4.  if there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Choose the `Custom` option. Use the defaults for most things, but be sure the base directory is `semantic/` and set the output directories to what is shown below:
+    ```javascript
+    Where should we output a packaged version?: "./../dist/semantic/",
+    Where should we output compressed components?: "./../dist/semantic/components/",
+    Where should we output uncompressed components?: "./../dist/semantic/components/",
+    "themes": "./../dist/semantic/themes/"
+    ```
+5.  from the resulting `/semantic` directory, move `gulpfile.js` and `/tasks` directory into the root of `project-name`
+6.  edit `semantic.json` to make the following edits:
+    1. set `autoInstall` property to `true`
+    1. set `themes` to `./../dist/semantic/themes`
+    1. ensure that `packaged`, `uncompressed` and `compressed` all start with `./../`
+
+      the file should now look like this:
+
+        ```javascript
+        {
+          "base": "semantic/",
+          "paths": {
+            "source": {
+              "config": "src/theme.config",
+              "definitions": "src/definitions/",
+              "site": "src/site/",
+              "themes": "src/themes/"
+            },
+            "output": {
+              "packaged": "./../dist/semantic/",
+              "uncompressed": "./../dist/semantic/components/",
+              "compressed": "./../dist/semantic/components/",
+              "themes": "./../dist/themes/"
+            },
+            "clean": "dist/"
+          },
+          "permission": false,
+          "autoInstall": true,
+          "rtl": false,
+          "version": "2.3.2"
+        }
+        ```
 7.  run `npm run build-all` to compile initial project files
 8.  run `npm run serve` to set up watchers on semantic and webpack files, and to launch a development server and view project in browser. Whenever you save changes to your project files, they should be automatically re-compiled and the browser will refresh for you. Nice!
-
-### Semantic UI output directories
-
-```javascript
-"packaged": "./../dist/semantic/",
-"uncompressed": "./../dist/semantic/components/",
-"compressed": "./../dist/semantic/components/",
-"themes": "./../dist/semantic/themes/"
-```
-
-semantic.json should look like:
-
-```javascript
-{
-  "base": "semantic/",
-  "paths": {
-    "source": {
-      "config": "src/theme.config",
-      "definitions": "src/definitions/",
-      "site": "src/site/",
-      "themes": "src/themes/"
-    },
-    "output": {
-      "packaged": "./../dist/semantic/",
-      "uncompressed": "./../dist/semantic/components/",
-      "compressed": "./../dist/semantic/components/",
-      "themes": "./../dist/themes/"
-    },
-    "clean": "dist/"
-  },
-  "permission": false,
-  "autoInstall": true,
-  "rtl": false,
-  "version": "2.3.2"
-}
-```
