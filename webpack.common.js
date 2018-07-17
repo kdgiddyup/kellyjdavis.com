@@ -3,11 +3,11 @@ const path = require("path");
 // config options can be found at https://webpack.js.org/configuration/
 
 module.exports = {
-  mode: "production",
   entry: "./src/js/index.js",
   output: {
+    path: path.resolve(__dirname, "dist/assets/js/"),
     filename: "bundle.js",
-    path: path.resolve(__dirname, "dist/js")
+    publicPath: "assets/"
   },
   module: {
     noParse: /jquery/,
@@ -17,10 +17,13 @@ module.exports = {
         use: ["style-loader", "css-loader"]
       },
       {
-        test: /\..js$/,
-        loader: "babel-loader",
-        options: {
-          presets: ["dev"]
+        test: /\.jsx|\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["env"]
+          }
         }
       }
     ]

@@ -1,5 +1,5 @@
 $(() => {
   // after page load, do:
 
-  $(".container").html("Hello, world!");
+  $(".container").prepend('<div data-display="page title">Hello, world!</div>');
 }); // end doc ready function
