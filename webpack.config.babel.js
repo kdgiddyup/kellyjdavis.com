@@ -6,7 +6,6 @@ const path = require("path");
 module.exports = () => {
   return {
     entry: `./src/js/index`,
-    mode: process.argv[2],
     output: {
       path: path.resolve(__dirname, `dist/assets/`),
       filename: "bundle.js",
