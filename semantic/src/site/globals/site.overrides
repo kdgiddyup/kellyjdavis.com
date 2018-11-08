@@ -311,15 +311,6 @@ Button h1, Button h2, Button h3, Button h4, Button h5, Button h6 {
     padding: 100px 50px;
 }
 
- .form {
-    background-color: @gulfstreamStone;
-    padding: 40px 75px;
-    color: @gulfstreamCharcoal;
-    font-family: @fontName;
-    font-size: 1em;
-    background: rgba(208,208,206,.8);
-} 
-
 .form > * {
     border-radius: 0 !important;
 }
