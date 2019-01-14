@@ -1,4 +1,11 @@
 {
-    "presets": [["env"]],
-    "plugins": ["transform-object-assign", "array-includes"]
+    "presets": [
+        [
+            "env"
+        ]
+    ],
+    "plugins": [
+        "transform-object-assign",
+        "array-includes"
+    ]
 }
