@@ -12,6 +12,10 @@
 /* --------------------------------
     Global Semantic-UI overrides
 --------------------------------- */
+.primary {
+    background-color: @gulfstreamBlue !important;
+    color: rgba(255,255,255,.8) !important;
+}
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
@@ -26,7 +30,7 @@ p {
     font-weight: @light;
 }
 
-.segment, .button, input, .ui.label {
+.segment, input, .ui.label {
     border-radius: 0px !important;
     border: none !important;
 }
@@ -58,56 +62,56 @@ a:hover {
     color: @lightPrimaryColorHover !important;
 }
 
-.info {
-    background-color: @gulfstreamInfo;
+.info:not(.message) {
+    background-color: @gulfstreamInfo !important;
 }
 
 .tout {
-    background-color: @gulfstreamTout;
+    background-color: @gulfstreamTout !important;
 }
 
 .slate {
-    background-color: @gulfstreamSlate;
+    background-color: @gulfstreamSlate !important;
 }
 
 .blue {
-    background-color: @gulfstreamBlue;
+    background-color: @gulfstreamBlue !important;
 }
 
 .blueTransparent {
-    background-color: @gulfstreamBlueTransparent;
+    background-color: @gulfstreamBlueTransparent !important;
 }
 
 .steel {
-    background-color: @gulfstreamSteel;
+    background-color: @gulfstreamSteel !important;
 }
 
 .charcoal {
-    background-color: @gulfstreamCharcoal;
+    background-color: @gulfstreamCharcoal !important;
 }
 
 .stone {
-    background-color: @gulfstreamStone;
+    background-color: @gulfstreamStone !important;
 }
 
 .mahogany {
-    background-color: @gulfstreamMahogany;
+    background-color: @gulfstreamMahogany !important;
 }
 
 .burgundy {
-    background-color: @gulfstreamBurgundy;
+    background-color: @gulfstreamBurgundy !important;
 }
 
 .leather {
-    background-color: @gulfstreamLeather;
+    background-color: @gulfstreamLeather !important;
 }
 
 .blueFoil {
-    background-color: @gulfstreamBlueFoil;
+    background-color: @gulfstreamBlueFoil !important;
 }
 
 .silverFoil {
-    background-color: @gulfstreamSilverFoil;
+    background-color: @gulfstreamSilverFoil !important;
 }
 
 .inverted {
@@ -115,15 +119,15 @@ a:hover {
     color: @lightPrimaryColor !important;
 }
 
-.info, .tout, .inverted, .charcoal, .slate, .mahogany, .burgundy, .blueFoil {
-    color: @lightPrimaryColor;
+.info:not(.message), .tout, .inverted, .charcoal, .slate, .mahogany, .burgundy, .blueFoil {
+    color: @lightPrimaryColor !important;
 }
-.info a, .tout a, .inverted a, .charcoal a, .slate a, .mahogany a, .burgundy a, .blueFoil a {
-    color: @lightPrimaryColor;
+.info:not(.message) a, .tout a, .inverted a, .charcoal a, .slate a, .mahogany a, .burgundy a, .blueFoil a {
+    color: @lightPrimaryColor !important;
 }
 
 a {
-    color: @linkColor;
+    color: @linkColor !important;
 }
 
 .inverted a {
@@ -141,6 +145,10 @@ a {
 
 .centered-text {
     text-align: center;
+}
+
+.light-text {
+    color: @invertedTextColor !important;
 }
 
 .border-right {
@@ -310,6 +318,7 @@ Button h1, Button h2, Button h3, Button h4, Button h5, Button h6 {
     margin: 0 auto;
     padding: 100px 50px;
 }
+
 
 .form > * {
     border-radius: 0 !important;
