@@ -1,11 +1,15 @@
 {
-    "presets": [
-        [
-            "env"
-        ]
-    ],
+    "presets": [["env"]],
     "plugins": [
         "transform-object-assign",
-        "array-includes"
+        "array-includes",
+        "transform-async-to-generator",
+        [
+            "transform-runtime",
+            {
+                "polyfill": false,
+                "regenerator": true
+            }
+        ]
     ]
 }
