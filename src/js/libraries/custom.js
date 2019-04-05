@@ -30,9 +30,8 @@ import {
 //  4. addCommas: returns comma-separated number string from number string or number value passed in: addCommas("132112") or addCommas(132112) returns "132,112"
 //  5. isTypeOf: returns true object type string from input value: isTypeOf([1,2,3]) returns "array"; isTypeOf({a:1,b:2}) returns "object"
 //  6. isValidJson: primitive check on passed in data; returns true (is parsable JSON) or false(with console logged error)
-//  7. play: plays sound based on property passed in: play("error"): will play randmon error sound in "error" array in "sounds" object
-
-console.log(isTypeOf({ a: 1, b: 2 }));
+//  7. play: plays sound based on property passed in: play(player, soundsOn, "error"): will play randmon error sound in "error" array in "sounds" object
+//           "sounds" object is defined in helper.js
 
 const api = "https://api.gulfstream.aero";
 
@@ -50,8 +49,8 @@ let appSection,
     modalActions,
     modalNegative,
     modalPositive,
-    player,
-    soundButton;
+    soundButton,
+    player;
 let gacUser = {};
 let sounds = {};
 let loadingIcon = `<i class="notched circle loading icon"></i>`;
@@ -74,33 +73,6 @@ $(() => {
     modalPositive = $("[data-button='modal positive button']");
     soundButton = $("[data-button='sounds']");
     player = $("[data-audio='sound effects']");
-
-    sounds = {
-        success: ["woohoo.wav", "homerlaugh1.wav"],
-        error: [
-            "doh.wav",
-            "bart-laugh.wav",
-            "marge-hmm.wav",
-            "burns-laugh.wav",
-            "nelson.wav",
-        ],
-        event: ["maggie.wav"],
-        logoff: ["byebye.mp3"],
-        chipmunk: ["chipmunk.mp3"],
-        longEvent: ["757.wav"],
-        alert: ["marge-hmm.wav"],
-        bell: ["service-bell.mp3"],
-        get: key => {
-            let path = "https://s3.amazonaws.com/gac-sounds/";
-            if (sounds[key].length > 1) {
-                return `${path}${
-                    sounds[key][Math.floor(Math.random() * sounds[key].length)]
-                }`;
-            }
-            return `${path}${sounds[key][0]}`;
-        },
-    };
-
     // some frequently accessed DOM elements
 
     loginButton.off().on("click", login);
@@ -108,7 +80,10 @@ $(() => {
 
     soundButton.hide().on("click", function() {
         if (soundsOn) {
-            play();
+            play(player);
+            // invoking player with no sound assigned pauses any
+            // currently playing audio
+
             soundsOn = false;
             $(this)
                 .find("i")
@@ -116,7 +91,7 @@ $(() => {
                 .addClass("off");
         } else {
             soundsOn = true;
-            play("success");
+            play(player, soundsOn, "success");
             $(this)
                 .find("i")
                 .removeClass("off")
@@ -209,7 +184,7 @@ const logout = () => {
             .removeClass("info warning negative positive")
             .addClass("info")
             .html(response.data);
-        play("logoff");
+        play(player, soundsOn, "logoff");
         localStorage.clear();
         gacUser = {};
         // reset user data
@@ -240,7 +215,7 @@ const adminCheck = user => {
     // attach logout function to login button
 
     if (!user.access || !user.access.support) {
-        play("error");
+        play(player, soundsOn, "error");
         globalMessage
             .html(
                 "You are logged in, but not registered to use this application. Please request access from a Digital Marketing team member."
@@ -248,7 +223,7 @@ const adminCheck = user => {
             .removeClass("info negative warning positive")
             .addClass("warning");
     } else {
-        play("success");
+        play(player, soundsOn, "success");
         appSection.show();
         renderApp();
         // kickoff app build with this authorized user

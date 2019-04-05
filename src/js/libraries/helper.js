@@ -1,6 +1,32 @@
 /* *******************
  *  Helper functions *
  ******************* */
+const sounds = {
+    success: ["woohoo.wav", "homerlaugh1.wav"],
+    error: [
+        "doh.wav",
+        "bart-laugh.wav",
+        "marge-hmm.wav",
+        "burns-laugh.wav",
+        "nelson.wav",
+    ],
+    event: ["maggie.wav"],
+    logoff: ["byebye.mp3"],
+    chipmunk: ["chipmunk.mp3"],
+    longEvent: ["757.wav"],
+    alert: ["marge-hmm.wav"],
+    bell: ["service-bell.mp3"],
+    get: key => {
+        let path = "https://s3.amazonaws.com/gac-sounds/";
+        if (sounds[key].length > 1) {
+            return `${path}${
+                sounds[key][Math.floor(Math.random() * sounds[key].length)]
+            }`;
+        }
+        return `${path}${sounds[key][0]}`;
+    },
+};
+
 export function getURLparams(prop) {
     /**
      * JavaScript Get URL Parameter
@@ -83,7 +109,7 @@ export function isValidJson(json) {
         return false;
     }
 }
-export function play(sound, start, stop) {
+export function play(player, soundsOn, sound, start, stop) {
     player[0].pause();
     if (sound && soundsOn) {
         player[0].src = `${sounds.get(sound)}#t=${start},${stop}`;
