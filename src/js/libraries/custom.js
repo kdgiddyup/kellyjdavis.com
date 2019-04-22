@@ -62,6 +62,9 @@ let loadingIcon = `<i class="notched circle loading icon"></i>`;
 $(() => {
     // post-load scripting
 
+    $(".menu .item").tab();
+    // initialize tabs
+
     /* some important DOM elements */
     appSection = $("[data-section='app section']").hide();
     helpPanel = $("[data-section='help section']");
@@ -371,9 +374,6 @@ const renderApp = () => {
     console.log("User data:", gacUser);
     soundButton.show();
     // reveal sound button
-
-    $(".menu .item").tab();
-    // initialize tabs
 
     appSection.html(`<div class="ui segment">
         <p>Hello, World!</p>

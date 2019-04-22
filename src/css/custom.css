@@ -1,1 +1,5 @@
 /* your custom css goes here */
+
+.menu .item {
+    cursor: pointer;
+}
