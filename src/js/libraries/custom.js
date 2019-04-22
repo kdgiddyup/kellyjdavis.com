@@ -50,9 +50,13 @@ let appSection,
     modalNegative,
     modalPositive,
     soundButton,
-    player;
+    player,
+    timerMessage,
+    sessionTimer;
 let gacUser = {};
 let sounds = {};
+let sessionWarningGiven = false;
+let sessionExpiredWarningGiven = false;
 let loadingIcon = `<i class="notched circle loading icon"></i>`;
 
 $(() => {
@@ -73,6 +77,7 @@ $(() => {
     modalPositive = $("[data-button='modal positive button']");
     soundButton = $("[data-button='sounds']");
     player = $("[data-audio='sound effects']");
+    timerMessage = $("[data-message='session timer']");
     // some frequently accessed DOM elements
 
     loginButton.off().on("click", login);
@@ -128,6 +133,10 @@ $(() => {
                     .html(
                         "This application could not determine if you are logged in. Please try again."
                     );
+                timerMessage
+                    .removeClass("info warning negative positive")
+                    .addClass("warning")
+                    .html("No session");
             }
             // no session found; remove SID from URL and message user
         });
@@ -152,6 +161,11 @@ $(() => {
                             .html(
                                 "The application could not log you in or the current session has expired. Please log in."
                             );
+                        timerMessage
+                            .removeClass("info warning negative positive")
+                            .addClass("warning")
+                            .html("No session");
+
                         loginButtonVisibleLabel.html(
                             `<i class="large sign-in icon"></i>`
                         );
@@ -166,6 +180,10 @@ $(() => {
                 )
                 .removeClass("info negative warning positive")
                 .addClass("info");
+            timerMessage
+                .removeClass("info warning negative positive")
+                .addClass("warning")
+                .html("No session");
         }
     }
 }); // end page ready function wrapper
@@ -184,6 +202,11 @@ const logout = () => {
             .removeClass("info warning negative positive")
             .addClass("info")
             .html(response.data);
+        timerMessage
+            .removeClass("info warning negative positive")
+            .addClass("warning")
+            .html("No session");
+        clearInterval(sessionTimer);
         play(player, soundsOn, "logoff");
         localStorage.clear();
         gacUser = {};
@@ -214,7 +237,7 @@ const adminCheck = user => {
     loginButton.off().on("click", logout);
     // attach logout function to login button
 
-    if (!user.access || !user.access.support) {
+    if (!user.access || !user.access.dev) {
         play(player, soundsOn, "error");
         globalMessage
             .html(
@@ -224,13 +247,128 @@ const adminCheck = user => {
             .addClass("warning");
     } else {
         play(player, soundsOn, "success");
+        sessionTimer = setInterval(checkSessionTime, 1000);
+        // set timer to check session time once per second
+
+        timerMessage.on("click", function() {
+            extendSession(timerMessage);
+        });
+        // if user clicks timer, session is extended
+
         appSection.show();
         renderApp();
         // kickoff app build with this authorized user
     }
 };
 
+const checkSessionTime = () => {
+    let now = new Date().getTime();
+    let expireTime = gacUser.expires;
+    let timeLeft = expireTime - now;
+    let hoursLeft = timeLeft / 60 / 60 / 1000;
+    let expireHours = Math.abs(parseInt(hoursLeft));
+    let expireMinutes = Math.abs(parseInt((hoursLeft % 1) * 60));
+    let expireSeconds = Math.abs(Math.round((((hoursLeft % 1) * 60) % 1) * 60));
+    let timeString = `${expireHours}:${
+        expireMinutes < 10 ? `0${expireMinutes}` : expireMinutes
+    }:${expireSeconds < 10 ? `0${expireSeconds}` : expireSeconds}`;
+    let minutesLeft = timeLeft / 1000 / 60;
+    timerMessage
+        .removeClass("info warning negative positive")
+        .addClass(
+            minutesLeft < 10 && minutesLeft >= 5
+                ? "warning"
+                : minutesLeft < 5
+                ? "negative"
+                : "info"
+        )
+        .html(
+            timeLeft >= 0
+                ? `Time left: ${timeString}`
+                : `Expired (${timeString})`
+        );
+
+    if (minutesLeft < 10 && minutesLeft >= 5) {
+        // time left is 10 minutes
+
+        play("alert");
+    }
+    if (minutesLeft < 5 && minutesLeft > 0) {
+        if (!sessionWarningGiven) {
+            play("alert");
+            sessionWarningGiven = true;
+            modalHeader.html("Sorry to interrupt, but ...");
+            modalContent.html(`<p>Your session will expire soon. You should either save your work now, or, if you need more time, extend your session.</p>
+            <div data-button="extend session" class="ui large primary button">Extend session</div>`);
+            modalNegative.hide();
+            $("[data-button='extend session']").on("click", function() {
+                extendSession($(this));
+                // make session extension request;
+                // pass in the button to receive loadingIcon
+
+                modal.modal("hide");
+            });
+            // add click handler to modal extend session button if there is time left
+
+            modal
+                .modal({
+                    onHidden: () => {
+                        modalNegative.show();
+                        // restore modalActions buttons for next modal use
+                    },
+                })
+                .modal("show");
+        }
+    } else if (minutesLeft <= 0 && !sessionExpiredWarningGiven) {
+        sessionExpiredWarningGiven = true;
+        play("alert");
+        modalContent.html(
+            `<p>Your session has expired. You must log out and log back in to continue working.</p>`
+        );
+        modalNegative.hide();
+        modal
+            .modal({
+                onHidden: () => {
+                    modalNegative.show();
+                },
+            })
+            .modal("show");
+    }
+};
+// end checkSessionTime function
+
+const extendSession = target => {
+    target.html(loadingIcon);
+    $.ajax({
+        url: `${api}/session/extend?sid=${localStorage.gacSession}`,
+        method: "GET",
+        beforeSend: request => {
+            request.setRequestHeader("x-access-token", gacUser.token);
+        },
+    }).done(res => {
+        if (res.success) {
+            play("success");
+            globalMessage
+                .removeClass("info warning positive negative")
+                .addClass("positive")
+                .html("Session extended successfully! But maybe take a break?");
+            gacUser.expires = res.data;
+            // update user expires property
+
+            sessionWarningGiven = false;
+            sessionExpiredWarningGiven = false;
+            // reset session warning flags
+        } else {
+            globalMessage
+                .removeClass("info warning positive negative")
+                .addClass("negative")
+                .html(res.data);
+        }
+    });
+};
+
 const renderApp = () => {
+    console.log("User data:", gacUser);
     soundButton.show();
     // reveal sound button
 
@@ -238,7 +376,7 @@ const renderApp = () => {
     // initialize tabs
 
     appSection.html(`<div class="ui segment">
-        Hello, World!
+        <p>Hello, World!</p>
     </div>`);
 };
 // end renderApp function

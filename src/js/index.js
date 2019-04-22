@@ -46,7 +46,7 @@ import "./../../semantic/dist/themes/default/assets/fonts/icons.svg";
     JS library imports 
 -------------------------*/
 import "./libraries/jquery-3.3.2.min";
-import "./libraries/jquery-ui.min";
+import "./libraries/jquery.ui-1.10.3";
 // import "./libraries/jquery.dm-uploader";
 import "./libraries/custom.js";
 
