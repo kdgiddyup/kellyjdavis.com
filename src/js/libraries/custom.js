@@ -355,8 +355,11 @@ const extendSession = target => {
                 .removeClass("info warning positive negative")
                 .addClass("positive")
                 .html("Session extended successfully! But maybe take a break?");
-            gacUser.expires = res.data;
-            // update user expires property
+            gacUser.expires = res.data.expires;
+            // update user expires property with new expiration from server
+
+            gacUser.token = res.data.token;
+            // update token with new extended token from server
 
             sessionWarningGiven = false;
             sessionExpiredWarningGiven = false;
