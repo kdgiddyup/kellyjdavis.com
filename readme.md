@@ -12,7 +12,6 @@ If not already installed, install Nodejs, then globally install live-server and 
 1.  In `package.json` change `name`, `description`, `author`, `version` and `license` properties to reflect your project.
 1.  Run `npm install`
 1.  If there are no hiccups in installation, you'll end up at a _semantic-ui_ set-up prompt. Accept the defaults.
-1.  From the `/semantic` directory in the project **root**, move `gulpfile.js` and `/tasks` directory into the root
 1.  Run `npm run build-all` to compile initial project files; this will take some time
 1.  Run `npm run serve` to set up watchers on semantic and webpack files, and to launch a development server and view project in browser. Whenever you save changes to your project files, they should auto-compile and the browser will refresh for you. Nice!
 
