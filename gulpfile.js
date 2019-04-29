@@ -8,7 +8,7 @@ MODIFICATIONS MADE TO THIS FILE:
 - If version issues arise, grab version in /semantic 
     and move to root, and change 
     
-    ./semantic/tasks 
+    ./tasks 
     
     refs to
     
