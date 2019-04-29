@@ -1,32 +1,6 @@
 /* *******************
  *  Helper functions *
  ******************* */
-const sounds = {
-    success: ["woohoo.wav", "homerlaugh1.wav"],
-    error: [
-        "doh.wav",
-        "bart-laugh.wav",
-        "marge-hmm.wav",
-        "burns-laugh.wav",
-        "nelson.wav",
-    ],
-    event: ["maggie.wav"],
-    logoff: ["byebye.mp3"],
-    chipmunk: ["chipmunk.mp3"],
-    longEvent: ["757.wav"],
-    alert: ["marge-hmm.wav"],
-    bell: ["service-bell.mp3"],
-    get: key => {
-        let path = "https://s3.amazonaws.com/gac-sounds/";
-        if (sounds[key].length > 1) {
-            return `${path}${
-                sounds[key][Math.floor(Math.random() * sounds[key].length)]
-            }`;
-        }
-        return `${path}${sounds[key][0]}`;
-    },
-};
-
 export function getURLparams(prop) {
     /**
      * JavaScript Get URL Parameter
@@ -105,19 +79,66 @@ export function isValidJson(json) {
         JSON.parse(json);
         return true;
     } catch (e) {
-        console.log(e);
         return false;
     }
 }
-export function play(player, soundsOn, sound, start, stop) {
-    player[0].pause();
-    if (sound && soundsOn) {
-        player[0].src = `${sounds.get(sound)}#t=${start},${stop}`;
-        player[0].play();
-        // load sound effect and play it
-        // 'play' method operates on dom element directly,
-        // not jQuery selector, hence the [0]
-        return;
-    }
-    return false;
-}
+export const Player = {
+    play: (sound, start, stop) => {
+        if (!Player.player) {
+            Player.player = $("[data-audio='sound effects']");
+        }
+        // default to likely DOM player definition in case
+        // player isn't defined
+        let player = Player.player;
+        player[0].pause();
+        if (sound && Player.soundsOn) {
+            player[0].src = `${Player.sounds.get(sound)}${
+                start ? `#t=${start}` : ""
+            }${stop ? `,${stop}` : ""}`;
+            player[0].play();
+            // load sound effect and play it
+            // 'play' method operates on dom element directly,
+            // not jQuery selector, hence the [0]
+            return;
+        }
+        return false;
+    },
+    sounds: {
+        success: ["woohoo.wav", "homerlaugh1.wav"],
+        error: [
+            "doh.wav",
+            "bart-laugh.wav",
+            "marge-hmm.wav",
+            "burns-laugh.wav",
+            "nelson.wav",
+        ],
+        event: ["maggie.wav"],
+        logoff: ["byebye.mp3"],
+        chipmunk: ["chipmunk.mp3"],
+        longEvent: ["757.wav"],
+        alert: ["marge-hmm.wav"],
+        bell: ["service-bell.mp3"],
+        get: key => {
+            let path = "https://s3.amazonaws.com/gac-sounds/";
+            if (Player.sounds[key].length > 1) {
+                return `${path}${
+                    Player.sounds[key][
+                        Math.floor(Math.random() * Player.sounds[key].length)
+                    ]
+                }`;
+            }
+            return `${path}${Player.sounds[key][0]}`;
+        },
+    },
+    config: config => {
+        for (let key in config) {
+            Player[key] = config[key];
+        }
+    },
+    setStatus: soundsOn => {
+        Player.soundsOn = soundsOn;
+    },
+    isOn: () => Player.soundsOn,
+    soundsOn: false,
+    // default to no sound
+};

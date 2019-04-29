@@ -20,22 +20,37 @@ import {
     addCommas,
     isTypeOf,
     isValidJson,
-    play,
+    Player,
 } from "./helper";
 // helper functions; comment out any you don't need
 
-//  1. getURLparams: parse incoming params on this apps URL
-//  2. sortObject: sort an array of objects by a passed in key: sortObject(array,key,type,sort) (default type=alpha and sort=asc)
-//  3. scroll: scroll to passed in jQuery object: scroll($("[data-section='header']"))
-//  4. addCommas: returns comma-separated number string from number string or number value passed in: addCommas("132112") or addCommas(132112) returns "132,112"
-//  5. isTypeOf: returns true object type string from input value: isTypeOf([1,2,3]) returns "array"; isTypeOf({a:1,b:2}) returns "object"
-//  6. isValidJson: primitive check on passed in data; returns true (is parsable JSON) or false(with console logged error)
-//  7. play: plays sound based on property passed in: play(player, soundsOn, "error"): will play randmon error sound in "error" array in "sounds" object
-//           "sounds" object is defined in helper.js
+/*  1. getURLparams: parse incoming params on this apps URL
+    2. sortObject: sort an array of objects by a passed in key: sortObject(array,key,type,sort) (default type=alpha and sort=asc)
+    3. scroll: scroll to passed in jQuery object: scroll($("[data-section='header']"))
+    4. addCommas: returns comma-separated number string from number string or number value passed in: addCommas("132112") or addCommas(132112) returns "132,112"
+    5. isTypeOf: returns true object type string from input value: isTypeOf([1,2,3]) returns "array"; isTypeOf({a:1,b:2}) returns "object"
+    6. isValidJson: primitive check on passed in data; returns true (is parsable JSON) or false(with console logged error)
+    7. Player: tooling to handle sound effects; DOM must include an <audio> tag. Example:
+
+        <audio id="audioPlayer" data-audio="sound effects" preload="none"></audio>
+
+        Player methods:
+            
+            Player.config( { config object }): Set initial state of player. Example:
+                
+                Player.config({
+                    player: $("[data-audio='sound effects']"),
+                    soundsOn: false
+                })
+
+            Player.play("sound" [,start,stop] ): Plays sound based on property passed in: Player.play("error",0,3) will randomly play any of potentially infinite sounds defined in Player.sounds.error array from beginning to third second. Omit start/stop values to play entire sound file. To see available sounds, console.log(Player.sounds) or consult the Player definition in ./helper.js
+            
+            Player.setStatus( Boolean ): turn sound effects on or off
+            
+            Player.isOn(): get sound effects on|off status as Boolean
+*/
 
 const api = "https://api.gulfstream.aero";
-
-let soundsOn = false;
 
 let appSection,
     globalMessage,
@@ -50,17 +65,21 @@ let appSection,
     modalNegative,
     modalPositive,
     soundButton,
-    player,
     timerMessage,
     sessionTimer;
 let gacUser = {};
-let sounds = {};
 let sessionWarningGiven = false;
 let sessionExpiredWarningGiven = false;
 let loadingIcon = `<i class="notched circle loading icon"></i>`;
 
 $(() => {
     // post-load scripting
+
+    Player.config({
+        player: $("[data-audio='sound effects']"),
+        soundsOn: false,
+    });
+    // initialize sound player
 
     $(".menu .item").tab();
     // initialize tabs
@@ -79,7 +98,6 @@ $(() => {
     modalNegative = $("[data-button='modal negative button']");
     modalPositive = $("[data-button='modal positive button']");
     soundButton = $("[data-button='sounds']");
-    player = $("[data-audio='sound effects']");
     timerMessage = $("[data-message='session timer']");
     // some frequently accessed DOM elements
 
@@ -87,19 +105,19 @@ $(() => {
     // add click handler to login button
 
     soundButton.hide().on("click", function() {
-        if (soundsOn) {
-            play(player);
+        if (Player.isOn()) {
+            Player.play();
             // invoking player with no sound assigned pauses any
             // currently playing audio
 
-            soundsOn = false;
+            Player.setStatus(false);
             $(this)
                 .find("i")
                 .removeClass("up")
                 .addClass("off");
         } else {
-            soundsOn = true;
-            play(player, soundsOn, "success");
+            Player.setStatus(true);
+            Player.play("success");
             $(this)
                 .find("i")
                 .removeClass("off")
@@ -210,7 +228,7 @@ const logout = () => {
             .addClass("warning")
             .html("No session");
         clearInterval(sessionTimer);
-        play(player, soundsOn, "logoff");
+        Player.play("logoff");
         localStorage.clear();
         gacUser = {};
         // reset user data
@@ -241,7 +259,7 @@ const adminCheck = user => {
     // attach logout function to login button
 
     if (!user.access || !user.access.dev) {
-        play(player, soundsOn, "error");
+        Player.play("error");
         globalMessage
             .html(
                 "You are logged in, but not registered to use this application. Please request access from a Digital Marketing team member."
@@ -249,7 +267,7 @@ const adminCheck = user => {
             .removeClass("info negative warning positive")
             .addClass("warning");
     } else {
-        play(player, soundsOn, "success");
+        Player.play("success");
         sessionTimer = setInterval(checkSessionTime, 1000);
         // set timer to check session time once per second
 
@@ -294,11 +312,11 @@ const checkSessionTime = () => {
     if (minutesLeft < 10 && minutesLeft >= 5) {
         // time left is 10 minutes
 
-        play("alert");
+        Player.play("alert");
     }
     if (minutesLeft < 5 && minutesLeft > 0) {
         if (!sessionWarningGiven) {
-            play("alert");
+            Player.play("alert");
             sessionWarningGiven = true;
             modalHeader.html("Sorry to interrupt, but ...");
             modalContent.html(`<p>Your session will expire soon. You should either save your work now, or, if you need more time, extend your session.</p>
@@ -324,7 +342,7 @@ const checkSessionTime = () => {
         }
     } else if (minutesLeft <= 0 && !sessionExpiredWarningGiven) {
         sessionExpiredWarningGiven = true;
-        play("alert");
+        Player.play("alert");
         modalContent.html(
             `<p>Your session has expired. You must log out and log back in to continue working.</p>`
         );
@@ -350,7 +368,7 @@ const extendSession = target => {
         },
     }).done(res => {
         if (res.success) {
-            play("success");
+            Player.play("success");
             globalMessage
                 .removeClass("info warning positive negative")
                 .addClass("positive")
@@ -406,7 +424,7 @@ const renderApp = () => {
 // })
 //     .done(res => {
 //         if (res.success) {
-//             play("success");
+//             Player.play("success");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("positive")
@@ -414,7 +432,7 @@ const renderApp = () => {
 //             console.log(res.data);
 //         } else {
 //             console.log(res);
-//             play("error");
+//             Player.play("error");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("negative")
@@ -423,7 +441,7 @@ const renderApp = () => {
 //     })
 //     .fail(err => {
 //         console.log(err);
-//         play("error");
+//         Player.play("error");
 //         globalMessage
 //             .removeClass("info negative warning positive")
 //             .addClass("negative")
@@ -482,7 +500,7 @@ const renderApp = () => {
 // })
 //     .done(res => {
 //         if (res.success) {
-//             play("success");
+//             Player.play("success");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("positive")
@@ -490,7 +508,7 @@ const renderApp = () => {
 //             console.log(res.data);
 //         } else {
 //             console.log(res);
-//             play("error");
+//             Player.play("error");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("negative")
@@ -499,7 +517,7 @@ const renderApp = () => {
 //     })
 //     .fail(err => {
 //         console.log(err);
-//         play("error");
+//         Player.play("error");
 //         globalMessage
 //             .removeClass("info negative warning positive")
 //             .addClass("negative")
@@ -527,7 +545,7 @@ const renderApp = () => {
 // })
 //     .done(res => {
 //         if (res.success) {
-//             play("success");
+//             Player.play("success");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("positive")
@@ -535,7 +553,7 @@ const renderApp = () => {
 //             console.log(res.data);
 //         } else {
 //             console.log(res);
-//             play("error");
+//             Player.play("error");
 //             globalMessage
 //                 .removeClass("info negative warning positive")
 //                 .addClass("negative")
@@ -544,7 +562,7 @@ const renderApp = () => {
 //     })
 //     .fail(err => {
 //         console.log(err);
-//         play("error");
+//         Player.play("error");
 //         globalMessage
 //             .removeClass("info negative warning positive")
 //             .addClass("negative")
@@ -575,9 +593,9 @@ const renderApp = () => {
 //             // to populate hits with matched data
 
 //             if (!hits.length) {
-//                 play("alert");
+//                 Player.play("alert");
 //             } else {
-//                 play("event");
+//                 Player.play("event");
 //             }
 
 //             // update UI with results
