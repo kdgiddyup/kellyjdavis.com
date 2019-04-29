@@ -245,6 +245,8 @@ const logout = () => {
         gacUser = {};
         // reset user data
 
+        soundButton.hide();
+
         loginButton.off().on("click", login);
         // update login button click handler
 
