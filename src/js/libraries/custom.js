@@ -64,6 +64,12 @@ let appSection,
     modalActions,
     modalNegative,
     modalPositive,
+    sModal,
+    sModalHeader,
+    sModalContent,
+    sModalActions,
+    sModalNegative,
+    sModalPositive,
     soundButton,
     timerMessage,
     sessionTimer;
@@ -97,6 +103,12 @@ $(() => {
     modalActions = modal.find(".actions");
     modalNegative = $("[data-button='modal negative button']");
     modalPositive = $("[data-button='modal positive button']");
+    sModal = $("[data-modal='session modal']");
+    sModalHeader = sModal.find(".header");
+    sModalContent = sModal.find(".content");
+    sModalActions = sModal.find(".actions");
+    sModalNegative = sModal.find("[data-button='modal negative button']");
+    sModalPositive = sModal.find("[data-button='modal positive button']");
     soundButton = $("[data-button='sounds']");
     timerMessage = $("[data-message='session timer']");
     // some frequently accessed DOM elements
@@ -318,42 +330,29 @@ const checkSessionTime = () => {
         if (!sessionWarningGiven) {
             Player.play("alert");
             sessionWarningGiven = true;
-            modalHeader.html("Sorry to interrupt, but ...");
-            modalContent.html(`<p>Your session will expire soon. You should either save your work now, or, if you need more time, extend your session.</p>
+            sModalHeader.html("Sorry to interrupt, but ...");
+            sModalContent.html(`<p>Your session will expire soon. You should either save your work now, or, if you need more time, extend your session.</p>
             <div data-button="extend session" class="ui large primary button">Extend session</div>`);
-            modalNegative.hide();
+            sModalNegative.hide();
             $("[data-button='extend session']").on("click", function() {
                 extendSession($(this));
                 // make session extension request;
                 // pass in the button to receive loadingIcon
 
-                modal.modal("hide");
+                sModal.modal("hide");
             });
             // add click handler to modal extend session button if there is time left
 
-            modal
-                .modal({
-                    onHidden: () => {
-                        modalNegative.show();
-                        // restore modalActions buttons for next modal use
-                    },
-                })
-                .modal("show");
+            modal.modal("show");
         }
     } else if (minutesLeft <= 0 && !sessionExpiredWarningGiven) {
         sessionExpiredWarningGiven = true;
         Player.play("alert");
-        modalContent.html(
+        sModalContent.html(
             `<p>Your session has expired. You must log out and log back in to continue working.</p>`
         );
-        modalNegative.hide();
-        modal
-            .modal({
-                onHidden: () => {
-                    modalNegative.show();
-                },
-            })
-            .modal("show");
+        sModalNegative.hide();
+        modal.modal("show");
     }
 };
 // end checkSessionTime function
