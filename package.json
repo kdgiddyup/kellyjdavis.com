@@ -1,7 +1,7 @@
 {
-    "name": "setupTemplate",
+    "name": "kellyjdavis.com",
     "version": "1.0.0",
-    "description": "prototypical dev setup",
+    "description": "Kellyjdavis.com",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",

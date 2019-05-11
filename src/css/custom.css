@@ -3,3 +3,11 @@
 .menu .item {
     cursor: pointer;
 }
+
+[data-section="header"] {
+    min-height: 200px;
+    background-image: url(./../img/kellydavis_header2.jpg) !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position-x: 100% !important;
+}

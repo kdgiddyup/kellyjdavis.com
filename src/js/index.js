@@ -59,7 +59,7 @@ import "./../css/custom.css";
     Images 
 ---------------*/
 import favicon from "./../img/favicon.ico";
-
+import portrait from "./../img/kellydavis_header2.jpg";
 /*---------
     HTML
 ----------*/
