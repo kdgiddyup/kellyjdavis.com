@@ -1,16 +1,11 @@
-/*******************************
-     Gulfstream Microsite 
-        Global Settings
-*******************************/
-
 /*-------------------
        Fonts
 --------------------*/
 
-@importGoogleFonts : false;
-
-@headerFontName: "HorizonDisplay";
-@fontName          : 'Horizon';
+@importGoogleFonts : true;
+@googleFontRequest : 'Lato|Stylish';
+@headerFontName     : 'Stylish';
+@fontName          : 'Lato';
 
 @fontSmoothing     : antialiased;
 
@@ -55,44 +50,11 @@
 
 @defaultBorderRadius: @absoluteBorderRadius;
 
+@primaryColor        : @fullBlack;
+@secondaryColor      : @darkWhite;
 
-
-/*----------------------
-    Gulfstream colors
-------------------------*/
-
-/* Classic colors */
-
-@gulfstreamBlue     : rgb(4,28,44);
-@gulfstreamBlueBorder: rgba(4,28,44,.15);
-@gulfstreamSteel    : rgb(104,129,151);
-@gulfstreamSlate    : rgb(136,139,141);
-@gulfstreamCharcoal : rgb(83,86,90);
-@gulfstreamStone    : rgb(208,208,206);
-@gulfstreamBlueTransparent: rgba(4, 28, 44, 0.7);
-
-
-/* Supplemental */
-
-@gulfstreamMahogany : rgb(91,52,39);
-@gulfstreamBurgundy   : rgb(101,29,50);
-@gulfstreamLeather   : rgb(161,86,28);
-@gulfstreamInfo : rgb(66,65,65);
-@gulfstreamTout : rgb(75,89,99);
-
-/* Metallics and Foils */
-
-@gulfstreamBlueFoil   : rgba(4,28,44,.5);
-@gulfstreamSilverFoil  : rgba(138,141,141,.5);
-
-
-@primaryColor        : @gulfstreamBlue;
-@secondaryColor      : @gulfstreamSteel;
-
-@lightPrimaryColor   : @white;
-@lightSecondaryColor : @gulfstreamBlue;
-
-@borderColor : @gulfstreamBlueBorder;
+@lightPrimaryColor   : lighten(@white, 75);
+@lightSecondaryColor : @white;
 
 /*--------------
   Page Heading
@@ -160,6 +122,7 @@
 --------------------*/
 
 @pageBackground      : #FFFFFF;
+@darkBackground       :#000000;
 @pageOverflowX       : hidden;
 
 @lineHeight          : 1.4285em;
@@ -269,7 +232,7 @@ index.js
 @olive            : #B5CC18;
 @green            : #21BA45;
 @teal             : #00B5AD;
-@blue             : @gulfstreamBlue;
+@blue             : #0000FF;
 @violet           : #6435C9;
 @purple           : #A333C8;
 @pink             : #E03997;
@@ -510,7 +473,7 @@ index.js
 --------------------*/
 
 @circularRadius                : 500rem;
-/* moved @borderColor to Gulfstream Colors section */
+@borderColor : #FAFAFA;
 @strongBorderColor         : rgba(34, 36, 38, 0.22);
 @internalBorderColor       : rgba(34, 36, 38, 0.1);
 @selectedBorderColor       : rgba(34, 36, 38, 0.35);

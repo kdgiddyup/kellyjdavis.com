@@ -8,7 +8,7 @@
         "build": "webpack --mode=development",
         "build-all": "gulp build && webpack --mode=production",
         "watch": "webpack --mode=development --watch & gulp watch",
-        "serve": "npm run watch & live-server --open=/dist"
+        "serve": "live-server --open=./dist & npm run watch"
     },
     "author": "kdjgac",
     "license": "ISC",
