@@ -1,5 +1,5 @@
 export const resumeData = `<h2>Summary</h2>
-                <p>Web development — front-end, back-end — with particular focus on NodeJs/Express but penchant for problem solving. Conversant and experienced in AWS Cloud infrastructure including CLI and SDK methods for working in S3, EC2 and serverless architectures such as API Gateway-Lambda-DynamoDB.</p>
+                <p>Web development — front- and back-end, with particular focus on NodeJs/Express but penchant for problem solving. Conversant and experienced in AWS Cloud infrastructure including CLI and SDK methods for working in S3, EC2 and serverless architectures such as API Gateway-Lambda-DynamoDB.</p>
 
                 <h2>Experience</h2>
                 
