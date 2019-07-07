@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const CopyPlugin = require('copy-webpack-plugin');
 // webpack config options can be found
 // at https://webpack.js.org/configuration/
 
@@ -14,6 +15,15 @@ module.exports = () => {
     // available to the front end 'fetch' command
 
     return {
+        plugins: [
+            new CopyPlugin([
+              { 
+                  from: './src/demos', 
+                  to: path.resolve(__dirname, `dist/demos/`), 
+                },
+            //  { from: 'other', to: 'public' },
+            ]),
+          ],
         entry: `./src/js/index`,
         output: {
             path: path.resolve(__dirname, `dist/assets/`),
@@ -104,7 +114,7 @@ module.exports = () => {
                 },
                 {
                     test: /\.jsx|\.js$/,
-                    exclude: /node_modules|jquery|dm-uploader/,
+                    exclude: /node_modules|jquery/,
                     use: {
                         loader: "babel-loader",
                         options: {
@@ -113,7 +123,7 @@ module.exports = () => {
                     },
                 },
                 {
-                    test: /jquery|dmuploader|semantic(.*)\.js$/,
+                    test: /jquery|semantic(.*)\.js$/,
                     loader: "file-loader",
                     options: {
                         name: "[name].[ext]",
@@ -132,7 +142,7 @@ module.exports = () => {
                     },
                 },
                 {
-                    test: /\.html$/,
+                    test: /\.(html|gif)$/,
                     loader: "file-loader",
                     options: {
                         name: "[name].[ext]",

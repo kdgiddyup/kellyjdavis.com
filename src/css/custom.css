@@ -10,4 +10,17 @@
     background-size: contain !important;
     background-repeat: no-repeat !important;
     background-position-x: 100% !important;
+    color: #ffffff !important;
+}
+
+[data-section="header"] a {
+    color: #ffffff !important;
+}
+
+[data-section='resume section'] {
+    margin: 50px 20% 0;
+}
+p.quoteblock {
+    font-size: 1.7em;
+    padding: 50px 20%;
 }

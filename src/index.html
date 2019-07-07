@@ -36,28 +36,29 @@
     </head>
 
     <body class="ui container">
-        <audio
-            id="audioPlayer"
-            data-audio="sound effects"
-            preload="none"
-        ></audio>
-        <div data-section="header" class="ui primary segment">
-            <h1>KellyJDavis.com</h1>
-        </div>
-        <div class="ui segment">
-            
+        <div data-section="header" class="ui primary segment"></div>
         <div class="ui segment">
             <div class="ui top attached tabular menu">
-                <div class="active item" data-tab="portfolio">
+                <div class="active item" data-tab="home">
+                    Home
+                </div>
+                <div class="item" data-tab="portfolio">
                     Portfolio
                 </div>
                 <div class="item" data-tab="resume">Resumé</div>
             </div>
+            <div class="ui bottom attached active tab segment" data-tab="home">
+                <p class="quoteblock">
+                    Hi! I'm Kelly.<br/><br/> 
+                    I work in traditional server, cloud server and serverless environments using JavaScript, NodeJs/Express and both SQL and NoSQL databases to help you with your application needs.
+                </p>
+            </div>
             <div
-                class="ui bottom attached active tab segment"
+                class="ui bottom attached tab segment"
                 data-tab="portfolio"
             >
-                <div data-section="portfolio section"></div>
+                <div class="ui fluid cards" data-section="portfolio section">
+                </div>
             </div>
             <div class="ui bottom attached tab segment" data-tab="resume">
                 <div data-section="resume section"></div>

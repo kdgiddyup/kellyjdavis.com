@@ -1,0 +1,39 @@
+li.site {
+    cursor: pointer
+}
+#atrMap {
+    height: 700px
+}
+.modal-title {
+    font-weight: bold;
+    font-size: 1.2em
+}
+.chart-container {
+    margin: 10px 0
+}
+#dir1Speed, #dir2Speed {
+    font-weight: bold;
+    font-size: 3em;
+}
+.dir1Label, .dir2Label {
+    font-size: .8em;
+}
+.modal-body {
+    padding: 0 30px;
+    overflow: auto;
+}
+.chartBtn {
+    margin: 20px 0;
+}
+#speedLabel,#countLabel {
+    text-align: center;
+    font-weight: bold;
+}
+#countLabel {
+    margin: 10px 0 -10px 0;
+}
+#hourLabel {
+    font-size: 1.5em;
+    text-align: center;
+    font-weight: bold
+}
