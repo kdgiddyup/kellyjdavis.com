@@ -65,7 +65,7 @@ import "./../css/custom.css";
 import favicon from "./../img/favicon.ico";
 import portrait from "./../img/kellydavis_header2.jpg";
 import realtimetraffic from "./../img/realtimetraffic.jpg";
-import smartLyrics from "./../img/smartLyrics.jpg";
+import gulfstreamnews from "./../img/gulfstreamnews.png";
 import issuuAPI from "./../img/issuuAPI.png";
 import mugshots from "./../img/mugshots.png";
 import BehindTheHotel from "./../img/BehindTheHotel.gif";

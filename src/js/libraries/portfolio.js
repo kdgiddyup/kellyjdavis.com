@@ -1,10 +1,10 @@
 export const portfolioData = [
         {
-            name: "SmartLyrics",
-            tech: "React,Node.js, Genius.com API, Express,Mongoose, Basic-Auth-Mongoose, Bootstrap, Heroku/MongoLab",
-            desc: `A project demonstrating the full MERN stack, with a stand-alone API delivering song data, including lyrics annotations, from the Genius API. Github: <a href="https://github.com/kdgiddyup/SmartLyrics-React" target="_blank">React files</a> | <a href="https://github.com/kdgiddyup/SmartLyricsAPI" target="_blank">API</a>`,
-            image: "smartLyrics.jpg",
-            url: "demos/smartlyrics"
+            name: "Gulfstream News",
+            tech: "UIKit, Webpack, Babel, AWS (DynamoDB, S3, Cognito, Lambda, CloudFront), Jekyll",
+            desc: `Full stack development of informational site for <a href="https://gulfstream.com" target="_blank">Gulfstream Aerospace</a> aimed at media partners.`,
+            image: "gulfstreamnews.png",
+            url: "https://gulfstreamnews.com"
         },
         {
             name: "Live traffic monitor",

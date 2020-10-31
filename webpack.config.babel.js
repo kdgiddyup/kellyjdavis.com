@@ -131,7 +131,7 @@ module.exports = () => {
                     },
                 },
                 {
-                    test: /\.(jp(e*)g|png|ico)$/,
+                    test: /\.(jp(e*)g|png|gif|ico)$/,
                     use: {
                         loader: "url-loader",
                         options: {
@@ -142,7 +142,7 @@ module.exports = () => {
                     },
                 },
                 {
-                    test: /\.(html|gif)$/,
+                    test: /\.(html)$/,
                     loader: "file-loader",
                     options: {
                         name: "[name].[ext]",
