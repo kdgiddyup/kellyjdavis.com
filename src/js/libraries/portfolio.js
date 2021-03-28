@@ -8,7 +8,7 @@ export const portfolioData = [
         },
         {
             name: "Live traffic monitor",
-            tech: "Node.js, Express, Cheerio/Request, Google Maps API, Graph.js, custom API",
+            tech: "Node.js, Express, Puppeteer, Google Maps API, Graph.js, custom API hosted on Heroku",
             desc: `I built a custom API to scrape the SC DOT's automatic traffic reporting system, which delivers hourly reports on current vehicle counts, historic counts and average speeds. I'm experimenting with delivering this to an audience using graph.js. <a href="https://github.com/kdgiddyup/realtimeTraffic" target="_blank">Github repo</a>`,
             image: "realtimetraffic.jpg",
             url: "demos/realtimeTraffic/"
