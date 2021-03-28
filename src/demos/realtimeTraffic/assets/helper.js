@@ -31,7 +31,6 @@ stateCenter = {lat:33.027134, lng:-80.364184};
 stateZoom = 8;
 
 const apiHost = "https://scdotatrapi.herokuapp.com";
-//const apiHost = "http://localhost:3000";
 
 // modal templates
 
@@ -51,7 +50,8 @@ fetchData = ( site, place ) => {
    
    // ajax to api route to retrieve current info   
    $.get(`${apiHost}/api/tables/${site}`, (response) => {
-    // no data from API? 
+       console.log("response:",response)
+        // no data from API? 
         if (response.actualDir1.length === 0 ) {
             // no data? update message modal with noData message
             $("#msgModalBody").html(noDataMsg)
@@ -73,8 +73,8 @@ fetchData = ( site, place ) => {
         
         let hourArray = ['1 AM','2 AM','3 AM','4 AM','5 AM','6 AM','7 AM','8 AM','9 AM','10 AM','11 AM','12 PM','1 PM','2 PM','3 PM', '4 PM','5 PM','6 PM','7 PM','8 PM','9 PM','10 PM','11 PM','12 AM'];
 
-        if (response.actualDir1.indexOf(" ") > -1)
-            var lastIndex = response.actualDir1.indexOf(" ")-1
+        if (response.actualDir1.indexOf(null) > -1)
+            var lastIndex = response.actualDir1.indexOf(null)-1
         else 
             var lastIndex = 23;
         
