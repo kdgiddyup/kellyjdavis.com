@@ -1,0 +1,374 @@
+#!/bin/bash
+# script to configure S3 buckets for website hosting
+
+# FUNCTIONS
+
+###################################
+# select menu with default option #
+###################################
+
+# from: https://stackoverflow.com/questions/42789273/bash-choose-default-from-case-when-enter-is-pressed-in-a-select-prompt
+
+selectWithDefault() {
+
+  local item i=0 numItems=$# 
+
+  # Print numbered menu items, based on the arguments passed.
+  # Short for: for item in "$@"; do
+  for item; do         
+    printf '%s\n' "$((++i))) $item"
+  done >&2 # Print to stderr, as `select` does.
+
+  # Prompt the user for the index of the desired item.
+  while :; do
+    printf %s "${PS3-#? }" >&2 # Print the prompt string to stderr, as `select` does.
+    read -r index
+    # Make sure that the input is either empty or that a valid index was entered.
+    [[ -z $index ]] && break  # empty input
+    (( index >= 1 && index <= numItems )) 2>/dev/null || { printf '%b\n' "Invalid selection. Please try again." >&2; continue; }
+    break
+  done
+
+  # Output the selected item, if any.
+  # If $index is non-empty (-n), command on right hand side of && is evaluated
+  # We also return index as the function's status
+  [[ -n $index ]] && printf %s "${@: index:1}"; return $index
+}
+
+# Visual cues: What is this script doing?
+printf '%b\n' $'\n\n'"=================================================="
+printf '%b\n' "    S3 Bucket configurator for website hosting    "
+printf '%b\n' "=================================================="$'\n'
+
+
+# wrap it all in a  confirmation loop
+unset OK
+until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
+
+    # read in if we are creating a new bucket or configuring an existing one
+    printf '%b\n' $'\n'"Is this a new or existing bucket (Enter for new)? "
+    OPTIONS=( "New" "Existing" )
+    STATUS=$(selectWithDefault "${OPTIONS[@]}")
+
+    # check answer and set default if ncecessary
+    if [ ! "$STATUS" ] || [ "$STATUS" = "New" ] 
+        then 
+            printf '%b\n' "\nQuerying AWS for available domains...\n"
+
+            # gather domain data via bash command substitution
+            DOMAINS=$(aws route53 list-hosted-zones --query "HostedZones[].Name" --output text --profile personal)
+            ZONEIDS=$(aws route53 list-hosted-zones --query "HostedZones[].Id" --output text --profile personal)
+        
+            # create select menu to obtain DOMAIN we're working in
+            printf '%b\n' $'\n'"Domain (Enter for \"gulfstream.aero\")?"
+            PDOMAINS=""
+            for word in $DOMAINS 
+            do
+                # concatenate word, adding quotes and removing extraneous '.' from AWS
+                PDOMAINS="$PDOMAINS ${word%.} "
+            done
+            PDOMAINS=($PDOMAINS)
+
+            # Send parsed domain list through select with default function
+            DOMAIN=$(selectWithDefault "${PDOMAINS[@]}") 
+            # return status represents index of answer
+            REPLY=$?
+            
+            # set default for null response
+            if [ ! "$DOMAIN" ] 
+                then
+                    DOMAIN=gulfstream.aero
+                    # reset reply for default index
+                    REPLY=2
+            fi
+
+
+            # set tmp to the awk field in the ZONEID string corresponding to $REPLY value
+            tmp=$(printf '%s ' $ZONEIDS | awk '{print $'$REPLY'}')
+            
+            # set ZONE to tmp with /hostedzone/ string removed
+            ZONEID=${tmp#*/hostedzone/}
+
+            printf '%b\n' "\nDomain will be \"$DOMAIN\" (Zone ID: $ZONEID)\n"
+    
+            # keep asking for SUBDOMAIN until it's set
+            unset SUBDOMAIN
+            until [ "$SUBDOMAIN" ]; do
+                # read in website subdomain
+                printf '%b\n' "Subdomain (required): "
+                read SUBDOMAIN
+            done
+
+            BUCKET=$SUBDOMAIN.$DOMAIN
+            
+            # create region menu
+            REGIONS=("us-east-1" "us-east-2" "us-west-1" "us-west-2" "ap-south-1" "ap-northeast-1" "ap-northeast-2" "ap-northeast-3" "ap-southeast-1" "ap-southeast-2" "ca-central-1" "eu-central-1" "eu-west-1" "eu-west-2" "eu-west-3" "sa-east-1")
+
+            printf '%b\n' "Region (Enter for \"us-east-1\"): "
+
+            REGION=$(selectWithDefault "${REGIONS[@]}")
+
+            if [ ! "$REGION" ]
+                then
+                    REGION="us-east-1"
+            fi
+
+            printf '%b\n' "Region: $REGION"$'\n'
+    else
+        # return list of available buckets
+        printf '%b\n\n'"Select from these available buckets:\n"
+        unset DOMAIN 
+        BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text --profile personal)
+        unset opt
+        select opt in $BUCKETS; do
+            if [ "$opt" ]
+                then
+                    BUCKET=$opt
+                    break
+                fi
+        done
+    fi
+
+    if [ ! "$REGION" ] 
+        then
+            printf '%b\n'"\nFetching region for this bucket ...\n"
+            REGION=$(aws s3api get-bucket-location --bucket $BUCKET --output text --profile personal)
+            if [ "$REGION" = "None" ] 
+                then
+                    REGION="us-east-1"
+            fi
+    fi
+
+    # set Route 53 Hosted Zone ID based on REGION
+        # for updates: https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+        case "$REGION" in
+            us-east-1)
+                RESOURCEID="Z3AQBSTGFYJSTF"
+                JOINER="-"
+                ;;
+            us-east-2)
+                RESOURCEID="Z2O1EMRO9K5GLX"
+                JOINER="."
+                ;;
+            us-west-1)
+                RESOURCEID="Z2F56UZL2M1ACD"
+                JOINER="-"
+                ;;
+            us-west-2)
+                RESOURCEID="Z3BJ6K6RIION7M"
+                JOINER="-"
+                ;;
+            ap-south-1)
+                RESOURCEID="Z11RGJOFQNVJUP"
+                JOINER="."
+                ;;
+            ap-northeast-3)
+                RESOURCEID="Z2YQB5RD63NC85"
+                JOINER="."
+                ;;
+            ap-northeast-2)
+                RESOURCEID="Z3W03O7B5YMIYP"
+                JOINER="."
+                ;;
+            ap-southeast-1)
+                RESOURCEID="Z3O0J2DXBE1FTB"
+                JOINER="-"
+                ;;
+            ap-southeast-2)
+                RESOURCEID="Z1WCIGYICN2BYD"
+                JOINER="-"
+                ;;
+            ap-northeast-1)
+                RESOURCEID="Z2M4EHUR26P7ZW"
+                JOINER="-"
+                ;;
+            ca-central-1)
+                RESOURCEID="Z1QDHH18159H29"
+                JOINER="."
+                ;;
+            eu-central-1)
+                RESOURCEID="Z21DNDUVLTQW6Q"
+                JOINER="."
+                ;;
+            eu-west-1)
+                RESOURCEID="Z1BKCTXD74EZPE"
+                JOINER="-"
+                ;;
+            eu-west-2)
+                RESOURCEID="Z3GKZC51ZF0DB4"
+                JOINER="."
+                ;;
+            eu-west-3)
+                RESOURCEID="Z3R1K369G5AVDG"
+                JOINER="."
+                ;;
+            sa-east-1)
+                RESOURCEID="Z7KQH4QJS55SO"   
+                JOINER="-"
+                ;;            
+            *)
+                RESOURCEID=0
+                printf '%b\n' $'\n'"WARNING: The script does not recognize that region. It will continue but there might be errors when the S3 requests are sent."
+                ;;
+        esac
+    printf '%b\n' $'\n'"Configuring bucket \"$BUCKET\" in region \"$REGION\" ..."$'\n'
+    
+    # read in index file
+    printf '%b\n' "Index file name (Enter for \"index.html\"): "
+    read INDEX 
+    if [ ! "$INDEX" ]
+        then 
+            INDEX=index.html
+    fi 
+    printf '%b\n' "Index file: $INDEX"$'\n'
+
+    # read in error file
+    printf '%b\n' "Error doc file name (Enter for \"index.html\"): "
+    read ERRORFILE
+    if [ ! "$ERRORFILE" ]
+        then 
+            ERRORFILE=index.html
+    fi
+    printf '%b\n' "Error file: $ERRORFILE"$'\n'
+
+    POLICY='{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::'$BUCKET'/*"
+        }
+    ]
+}'
+
+    WEBCONF='{
+    "IndexDocument": {
+        "Suffix": "'$INDEX'"
+    },
+    "ErrorDocument": {
+        "Key": "'$ERRORFILE'"
+    },
+    "RoutingRules": [
+        {
+        "Redirect": {
+            "ReplaceKeyWith": "'$INDEX'"
+        },
+        "Condition": {
+            "KeyPrefixEquals": "/"
+        }
+        }
+    ]
+    }'
+
+    # display what we've generated for approval:
+    printf '%b\n' $'\n'"Please review and approve the bucket policy and website configuration:"$'\n'
+    printf '%b\n' $'\n'"POLICY:"
+    printf '%b\n' "-------"
+    printf '%b\n' $POLICY | python -m json.tool
+
+    printf '%b\n' $'\n'"WEBSITE CONFIG:"
+    printf '%b\n'      "---------------"
+    printf '%b\n' $WEBCONF | python -m json.tool
+
+    # read in approval
+    printf '%b\n' "OK (Y/n)?"
+    read OK
+    if [ ! "$OK" ]
+        then OK="y"
+    fi
+    if [ "$OK" = "y" ] || [ "$OK" = "Y" ]
+        then
+            # write config data to files
+            # make tmp dir if necessary (-p)
+            mkdir -p $PWD/s3tmp
+            printf '%b\n' $POLICY | python -m json.tool > $PWD/s3tmp/policy.json
+            printf '%b\n' $WEBCONF | python -m json.tool > $PWD/s3tmp/webconf.json
+
+            # are we creating a new bucket?
+            if [ ! "$STATUS" ] || [ "$STATUS" = "New" ]
+                then
+                    printf '%b\n' $'\n'"Sending request to create bucket \"$BUCKET\""
+                    if ! aws s3 mb s3://$BUCKET --region $REGION --profile personal; 
+                        then 
+                            # create-bucket returned error
+                            printf '%b\n' $'\n'"Could not create bucket. See output above for info."
+                            unset OK;
+                    else 
+                        printf '%b\n' $'\n'"Bucket $BUCKET created."
+                    fi
+            fi
+
+            # send off bucket policy and website config needed to S3 site hosting
+            if aws s3api put-bucket-policy --bucket $BUCKET --policy file://$PWD/s3tmp/policy.json --profile personal; then
+                # put-bucket-policy succeeded
+                printf '%b\n' $'\n'"Bucket policy sent to AWS ..."
+            else
+                # operation returned error
+                printf '%b\n' $'\n'"Could not send bucket policy to AWS. See output above for info."
+                unset OK;
+            fi
+
+            if aws s3api put-bucket-website --bucket $BUCKET --website-configuration file://$PWD/s3tmp/webconf.json --profile personal; then
+                # put-bucket-website succeed
+                printf '%b\n' "Bucket config sent to AWS ..."
+            else 
+                # put-bucket-website returned error
+                printf '%b\n' $'\n'"Could not send bucket config to AWS. See output above for info."
+                unset OK;
+            fi
+    fi
+done
+
+    # Does user want to make a Route 53 alias record?
+    printf '%b\n' $'\n'"Create Route 53 alias to point \"http://${BUCKET}\" to your new bucket (Y/n)?"
+    read CREATEALIAS
+    if [ ! "$CREATEALIAS" ] || [ "$CREATEALIAS" = "Y" ] || [ "$CREATEALIAS" = 'y' ]
+        then
+            printf '%b\n' $'\n'"Preparing alias request"
+            # create request file
+            printf '%b\n' '{
+            "Comment": "Creating Alias resource record sets in Route 53",
+            "Changes": [
+                {
+                "Action": "UPSERT",
+                "ResourceRecordSet": {
+                    "Name": "'$BUCKET'",
+                    "Type": "A",
+                    "AliasTarget": {
+                        "HostedZoneId": "'$RESOURCEID'",
+                        "DNSName": "s3-website'$JOINER''$REGION'.amazonaws.com",
+                        "EvaluateTargetHealth": false
+                        }
+                    }
+                }
+            ]
+        }' | python -m json.tool > $PWD/s3tmp/changebatch.json
+    fi
+    printf '%b\n' "\nSent record request to Route 53 to point http://$BUCKET to your bucket ...\n" 
+
+    if aws route53 change-resource-record-sets --hosted-zone-id $RESOURCEID --change-batch file://$PWD/s3tmp/changebatch.json --profile personal; then
+        # route53 config succeeded
+        printf '%b\n' "\nThe request succeeded. It might take several minutes for the new domain to resolve.\n" 
+    else
+        printf '%b\n' "\nThere was a problem submitting the Route 53 DNS request. See output above for more detail.\n"
+    fi
+
+# remove tmp dir
+rm -rf s3tmp
+
+# Do we want to also upload documents to the newly created bucket?
+printf '%b\n' $'\n'"Upload documents to \"${BUCKET}\" (Y/n)?"
+read UPLOADDOCS
+if [ ! "$UPLOADDOCS" ] || [ "$UPLOADDOCS" = "Y" ]
+    then
+        UPLOADDOCS=y
+fi
+
+# if yes, launch s3sync script
+if [ "$UPLOADDOCS" = "y" ]
+    then
+        s3sync $BUCKET
+fi

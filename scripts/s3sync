@@ -1,0 +1,308 @@
+#!/bin/bash
+
+# FUNCTIONS
+
+###################################
+# select menu with default option #
+###################################
+
+# from: https://stackoverflow.com/questions/42789273/bash-choose-default-from-case-when-enter-is-pressed-in-a-select-prompt
+
+selectWithDefault() {
+
+  local item i=0 numItems=$# 
+
+  # Print numbered menu items, based on the arguments passed.
+  # Short for: for item in "$@"; do
+  for item; do         
+    printf '%s\n' "$((++i))) $item"
+  done >&2 # Print to stderr, as `select` does.
+
+  # Prompt the user for the index of the desired item.
+  while :; do
+    printf %s "${PS3-#? }" >&2 # Print the prompt string to stderr, as `select` does.
+    read -r index
+    # Make sure that the input is either empty or that a valid index was entered.
+    [[ -z $index ]] && break  # empty input
+    (( index >= 1 && index <= numItems )) 2>/dev/null || { printf '%b\n' "Invalid selection. Please try again." >&2; continue; }
+    break
+  done
+
+  # Output the selected item, if any.
+  # If $index is non-empty (-n), command on right hand side of && is evaluated
+  # We also return index as the function's status
+  [[ -n $index ]] && printf %s "${@: index:1}"; return $index
+}
+
+# Visual cues: What is this script doing?
+printf '%b\n' "\n\n=========================="
+printf '%b\n' "    S3 Bucket Syncer    "
+printf '%b\n' "==========================\n"
+
+# did we invoke script with argument? it might be 
+# the bucket name from s3web script
+INCOMINGBUCKET=$1
+
+# What buckets are available?
+printf '%b\n' "\nFetching available buckets ...\n"
+BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text --profile personal)
+
+# process list
+PBUCKETS=""
+for word in $BUCKETS 
+    do
+        # concatenate word, adding quotes
+        PBUCKETS="$PBUCKETS $word"
+done
+
+PBUCKETS=($PBUCKETS)
+
+# set up final confirmation loop
+unset OK
+until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
+  
+    # read in which domain we're using
+    # first determine message depending on presence of parameter
+    if [ "$INCOMINGBUCKET" ]
+        then 
+            MESSAGE="Enter for \""$INCOMINGBUCKET"\" or type bucket number:"
+    else
+        MESSAGE="Enter bucket number:"
+    fi
+
+    printf '%b\n' "\n$MESSAGE\n"
+
+    BUCKET=$(selectWithDefault "${PBUCKETS[@]}")
+    
+    if [ ! "$BUCKET" ]
+        then
+            BUCKET="$INCOMINGBUCKET"
+    fi
+    
+    printf '%b\n' "\nBucket: $BUCKET\n"
+
+    # read in subdirectory
+    unset SUBDIR
+    printf '%b\n' "\nInput subdirectory, or press Enter to accept the root directory"
+    read SUBDIR
+    printf '%b\n' "\nSubdirectory set to \"$SUBDIR\"\n"
+    
+    # read in path to assets; this is a required entry
+    unset UPATH
+    until [ "$UPATH" ]; do
+        printf '%b\n' "\nInput path to directory containing uploads, or press Enter to accept:\n\"$PWD\""
+        read UPATH
+
+        # evaluate response and set default
+        if [ ! "$UPATH" ]
+            then UPATH="."
+        fi
+    done
+    printf '%b\n' "\nPath set to \"$UPATH\"\n"
+
+    # prompt for delete flag 
+    printf '%b\n' "\nDelete files in target bucket not present in source (y/N)?"
+    read DFLAG
+    if [ "$DFLAG" = "y" ] || [ "$DFLAG" = "Y" ]
+        then
+            DFLAG="--delete"
+            printf '%b\n' "\n\"--delete\" option will be included.\n"
+    else 
+        DFLAG=""
+        printf '%b\n' "\n\"--delete\" option will NOT be included.\n"
+    fi
+
+    printf '%b\n' "\nFor the next two prompts, read up on AWS S3 --include and --exclude patterns if you are unsure how to proceed:\nhttps://docs.aws.amazon.com/cli/latest/reference/s3/index.html#use-of-exclude-and-include-filters"
+
+    # any default excludes?
+    EXCLUDEDEFAULTS=".git/*"
+    EXCLUDE="--exclude \"$EXCLUDEDEFAULTS\""
+
+    # prompt to enter exclude flag
+    printf '%b\n' "\nDo you need to exclude any files from this sync (\"$EXCLUDEDEFAULTS\" excluded by default) (y/N)?"
+    
+    read SETEXCLUDE
+    if [ "$SETEXCLUDE" = "y" ] || [ "$SETEXCLUDE" = "Y" ]
+        then
+            # normalize value
+            SETEXCLUDE=y
+
+            # prompt for exclude flag
+            unset FLAGOK
+            until [ "$FLAGOK" = "y" ] || [ "$FLAGOK" = "Y" ]; do
+                printf '%b\n' "\nEnter space-separated \"exclude\" pattern(s):"
+                read EXCLUDEPATT
+                
+                # temporarily replace "*" with "#" to avoid auto-expansion of dir variable
+                EXCLUDEPATT=${EXCLUDEPATT//'*'/'#'}
+
+                # loop through input to build all exclude patterns provided
+                for PATT in $EXCLUDEPATT
+                do
+                    # replacing "#"s with original "*"s
+                    PATT=${PATT//'#'/'*'}
+                    
+                    # build --exclude flags for each PATT
+                    EXCLUDE="$EXCLUDE --exclude \"$PATT\""
+                done
+
+                # show result
+                printf '%s ' $'\n'"Exclude option will look like:"$'\n'$EXCLUDE
+                
+                # confirm value
+                printf '%b\n' "\n\nOK (Y/n)?\n"
+                read FLAGOK
+                if [ ! "$FLAGOK" ]
+                    then
+                        FLAGOK=y
+                fi
+            done
+    fi
+
+    # prompt to enter include flag, but only if SETEXCLUDE is set
+    if [ "$SETEXCLUDE" = "y" ]
+        then
+            printf '%b\n' "\nDo you need to re-include any files or directories for this sync? (y/N)?"
+            read SETINCLUDE
+            if [ "$SETINCLUDE" = "y" ] || [ "$SETINCLUDE" = "Y" ]
+                then
+                    # normalize value
+                    SETINCLUDE=y
+
+                    # prompt for include flag
+                    unset FLAGOK
+                    until [ "$FLAGOK" = "y" ] || [ "$FLAGOK" = "Y" ]; do
+                        printf '%b\n' "\nEnter space-separated \"include\" patterns:\n"
+                        read INCLUDEPATT
+
+                         # temporarily replace "*" with "#" to avoid auto-expansion of dir variable
+                        INCLUDEPATT=${INCLUDEPATT//'*'/'#'}
+                        
+                        # loop through input to build all include patterns provided
+                        for PATT in $INCLUDEPATT
+                        do
+                            # replace "#"s with original "*"s
+                            PATT=${PATT//'#'/'*'}
+
+                            # build --include flags for each PATT
+                            INCLUDE="$INCLUDE --include \"$PATT\""
+                        done
+
+                        #show result
+                        printf '%s ' $'\n'"Include option will look like:"$'\n'$INCLUDE
+                        
+                        # confirm value
+                        printf '%b\n' "\n\nOK (Y/n)?\n"
+                        read FLAGOK
+                        if [ ! "$FLAGOK" ]
+                            then
+                                FLAGOK=y
+                        fi
+                done
+            fi
+    fi
+
+
+    # generate command
+    SYNCLIVE="aws s3 sync $UPATH s3://$BUCKET/$SUBDIR --acl public-read $INCLUDE $EXCLUDE $DFLAG --profile personal"
+    SYNCTEST="$SYNCLIVE --dryrun"
+    
+    printf '%b\n' "\n\nThis will upload all non-excluded files and directories in the above location to \"$BUCKET/$SUBDIR\" using this command:\n"
+    printf '%s ' $SYNCLIVE
+    
+    # Offer test option
+    printf '%b\n' "\n\nTest the command (ie, see files it affects without actually moving them) (y/N)?\n"
+    read TEST 
+    if [ "$TEST" = "y" ] || [ "$TEST" = "Y" ]
+        then 
+            eval $SYNCTEST
+    fi
+    printf '%b\n' "\nProceed with live upload (y/N)?"
+    read OK
+    if [ "$OK" = "Y" ] || [ "$OK" = "y" ]
+        then 
+            printf '%b\n' "\nUploading files to \"$BUCKET/$SUBDIR\" ...\n"
+            if eval $SYNCLIVE; then
+                printf '%b\n' "\nUpload complete. If your bucket has been aliased to a domain, you can visit the site here: https://$BUCKET/$SUBDIR\n"
+            else
+                printf '%b\n' "\nThere was a problem syncing. Further information should be above.\n"
+            fi
+    else
+        # Confirmation negated; reset start over
+        unset OK
+        unset BUCKET
+        unset SUBDIR
+        unset FLAGOK
+        unset SETEXCLUDE
+        unset SETINCLUDE
+        unset INCLUDE
+        unset EXCLUDE
+    fi
+done
+   
+# Option to invalidate cache for cloudfront distribution
+# set up cache invalidation confirmation loop
+
+# prompt to enter cache clearing steps
+printf '%b\n' "\nDo you need to purge a CloudFront cache on an asset in \"$BUCKET\" (y/N)?"
+
+read PURGE
+if [ "$PURGE" = "y" ] || [ "$PURGE" = "Y" ]
+    then
+        printf '%b\n' "\nLooking up CloudFront distribution ID ...\n"
+        
+        # if there is a distribution ID for this bucket, this command will return it:
+        DISTRIBUTIONID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?@==\`$BUCKET\`]].[Id]" --output text --no-paginate --profile personal)
+
+        if [ ! "$DISTRIBUTIONID" = "" ] 
+            then
+                printf '%b\n' "\nFound distribution ID for \"$BUCKET\" ($DISTRIBUTIONID).\n"
+                unset PATHOK
+                until [ "$PATHOK" = "y" ] || [ "$PATHOK" = "Y" ]; do
+                    printf '%b\n' "\nEnter space-separated paths to files:\n"
+                    read PURGEPATHS
+                    
+                    # temporarily replace "*" with "^" to avoid auto-expansion of path
+                    PURGEPATHS=${PURGEPATHS//"*"/"^"}
+                    CHECKEDPATHS=""
+                    for PATH in $PURGEPATHS
+                    do
+                        if [[ "$PATH" =~ ^/ ]]
+                            then 
+                                CHECKEDPATHS=$CHECKEDPATHS$PATH" "
+                            else 
+                                CHECKEDPATHS=$CHECKEDPATHS"/"$PATH" "
+                        fi
+                    done
+                    # Check for preceding "/" for each path and
+                    # add if missing
+
+                    CHECKEDPATHS=${CHECKEDPATHS//"^"/"*"}
+                    # replace temporary "^" with "*" 
+                    
+                    CHECKEDPATHS=${CHECKEDPATHS/%[[:space:]]/""}
+                    # replace trailing space with nothing 
+                    # to specify trailing: // becomes /%
+                    # to specify leading: // becomes /#
+
+
+                    
+                    printf '%b\n' "\nIs \"$CHECKEDPATHS\" correct? (Y/n)?"
+                    read PATHOK
+                    if [ ! "$PATHOK" ]
+                        then 
+                            PATHOK=y
+                    fi
+                done
+                printf '%b\n' "\nSending cache invalidation command for \"$CHECKEDPATHS\" in \"$BUCKET\" ...\n"
+                if  eval "aws cloudfront create-invalidation --distribution-id $DISTRIBUTIONID --paths $CHECKEDPATHS --profile personal"
+                    then
+                        printf '%b\n' "\nInvalidation command succeeded.\n"
+                    else
+                        printf '%b\n' "\nThere was a problem invalidating the cache. Further information should be output above.\n"
+                fi
+        else
+            # Distribution ID lookup failed
+            printf '%b\n' "\nThere was a problem looking up the CloudFront distribution ID for \"$BUCKET\". Further information should be output above.\n"
+        fi
+fi
