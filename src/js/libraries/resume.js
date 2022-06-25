@@ -40,15 +40,12 @@ export const resumeData = `<h2>Summary</h2>
                     </tr>
                     <tr>
                         <td>
-                            Coded and maintained specialty products such as <a href="http://www.islandpacket.com/news/local/traffic/article131638114.html" target="_blank">traffic camera</a> and <a href="http://www.islandpacket.com/news/local/traffic/article168332912.html"
-                                target="_blank">statewide realtime vehicle count</a> tools.
+                            Coded and maintained specialty products such as traffic camera and statewide realtime vehicle count tools.
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            Coded and maintained
-                            <a href="http://www.islandpacket.com/news/databases/" target="_blank" title="Islandpacket.com databases" data-toggle="tooltip">
-                                databases, including local and state public salaries, local crime reports, property transfers and restaurant inspections</a>.
+                            Coded and maintained databases, including local and state public salaries, local crime reports, property transfers and restaurant inspections.
                         </td>
                     </tr>
                     <tr>
