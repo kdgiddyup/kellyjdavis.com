@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 
 module.exports = (env, argv) => {
@@ -23,6 +24,13 @@ module.exports = (env, argv) => {
 				filename: "./../css/[name].css",
 				chunkFilename: "[id].css"
 			}),
+			new CopyPlugin([
+				{
+					from: "./src/demos",
+					to: path.resolve(__dirname, `dist/demos/`)
+				}
+				//  { from: 'other', to: 'public' },
+			]),
 			new webpack.ProvidePlugin({
 				$: "jquery",
 				jQuery: "jquery",
@@ -34,7 +42,7 @@ module.exports = (env, argv) => {
 			// app: "./src/js/app.js",
 			main: "./src/js/main.js",
 			head: "./src/js/head.js",
-			combined: "./custom/uikit-gulfstream.less"
+			combined: "./custom/uikit-custom.less"
 		},
 		output: {
 			path: path.resolve(__dirname, "dist/js/"),
@@ -92,7 +100,7 @@ module.exports = (env, argv) => {
 					]
 				},
 				{
-					test: /img\/(.*)\.(jp(e*)g|png)$/,
+					test: /img\/(.*)\.(jp(e*)g|png|gif|ico)$/,
 					use: {
 						loader: "url-loader",
 						options: {

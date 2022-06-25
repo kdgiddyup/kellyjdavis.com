@@ -1,0 +1,223 @@
+/* ***************************
+    Project specific styles 
+****************************** */
+.hidden {
+	display: none;
+}
+
+.invisible {
+	visibility: hidden;
+}
+
+.visible {
+	visibility: visible;
+}
+
+.bold,
+strong {
+	font-weight: bold !important;
+}
+.italic {
+	font-style: italic;
+}
+.pointer {
+	cursor: pointer;
+}
+
+.no_events {
+	pointer-events: none;
+}
+.capitalize {
+	text-transform: capitalize;
+}
+.dimmer {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.25);
+	z-index: 1000;
+	& .uk-spinner {
+		position: relative;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+.underline {
+	text-decoration: none;
+	border-color: inherit;
+	border-bottom: 1px solid;
+	padding-bottom: 1px;
+}
+
+.text-gold {
+	color: @gold;
+}
+.text-peri {
+	color: @peri;
+}
+.text-blue {
+	color: @blue;
+}
+.text-white {
+	color: @white;
+}
+.text-slate {
+	color: @slate;
+}
+.text-sand {
+	color: @sand;
+}
+.text-orange {
+	color: @orange;
+}
+.text-steel {
+	color: @steel;
+}
+.text-teal {
+	color: @teal;
+}
+.text-brown {
+	color: @brown;
+}
+.text-utility-blue {
+	color: @utility-blue;
+}
+.text-utility-green {
+	color: @utility-green;
+}
+.text-utility-yellow {
+	color: @utility-yellow;
+}
+.text-utility-orange {
+	color: @utility-orange;
+}
+.text-utility-red {
+	color: @utility-red;
+}
+.text-grey1 {
+	color: @grey1;
+}
+.text-grey2 {
+	color: @grey2;
+}
+.text-grey3 {
+	color: @grey3;
+}
+.text-grey4 {
+	color: @grey4;
+}
+.text-grey5 {
+	color: @grey5;
+}
+.text-grey6 {
+	color: @grey6;
+}
+.text-grey7 {
+	color: @grey7;
+}
+.text-grey8 {
+	color: @grey9;
+}
+.text-grey10 {
+	color: @grey10;
+}
+.text-grey11 {
+	color: @grey11;
+}
+.text-grey12 {
+	color: @grey12;
+}
+
+& .select2-selection {
+	height: 40px !important;
+	border-radius: 0 !important;
+	& .select2-selection__rendered {
+		top: 50% !important;
+		transform: translateY(-50%);
+		position: relative !important;
+	}
+	& .select2-selection__arrow {
+		top: 50% !important;
+		transform: translateY(-50%);
+	}
+}
+
+.error {
+	& label {
+		color: @orange;
+	}
+	& input,
+	.select2-selection,
+	textarea {
+		color: @utility-orange !important;
+		border-color: @utility-orange !important;
+		background-color: rgba(@utility-orange, 0.25) !important;
+	}
+}
+
+#direct_editor {
+	position: relative;
+	& textarea {
+		display: block;
+		border-color: #666;
+		padding: 20px;
+		color: @grey8;
+		font-family: Consolas, monaco, monospace;
+	}
+}
+.pill {
+	background-color: @sand;
+	border-radius: 5px;
+	padding: 2px 10px;
+	margin: 0 5px 10px;
+	display: inline-block;
+}
+.included_zone {
+	&.drag_on {
+		border: 1px dashed @grey5;
+		padding: 10px;
+	}
+}
+.changes {
+	& p {
+		margin-bottom: 0;
+	}
+	& hr {
+		margin: 0 !important;
+	}
+}
+
+p {
+	margin: 10px 0;
+}
+#nav {
+	background-image: url(./../src/img/kellydavis_header2.jpg) !important;
+	background-size: contain !important;
+	background-repeat: no-repeat !important;
+	background-position-x: 100% !important;
+	background-color: @black;
+	color: #ffffff !important;
+	& a,
+	h1 {
+		color: #ffffff !important;
+	}
+	& h1 {
+		margin: 0 0 10px 0 !important;
+	}
+}
+
+#resume {
+	margin: 50px 20% 0;
+}
+p.quoteblock {
+	font-size: 1.7em;
+	padding: 50px 20%;
+}

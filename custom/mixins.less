@@ -1,0 +1,12 @@
+.responsive(@minWidth;
+@rules) {
+    @media only screen and (min-width: @minWidth) {
+        @rules();
+    }
+}
+
+.responsiveWH(@maxWidth; @maxHeight; @rules) {
+    @media only screen and (max-width: @maxWidth) and (max-height: @maxHeight) {
+        @rules();
+    }
+}

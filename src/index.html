@@ -1,69 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="user-scalable=no, width=device-width, initial-scale=1"
-        />
-        <link rel="shortcut icon" type="image/ico" />
-        <title>kellyjdavis.com</title>
-        <meta http-equiv="X-UA-Compatible" content="ie=10" />
-        <!-- jquery and jquery UI -->
-        <script
-            type="text/javascript"
-            src="assets/js/jquery-3.3.2.min.js"
-        ></script>
-        <script
-            type="text/javascript"
-            src="assets/js/jquery.ui-1.10.3.js"
-        ></script>
-        <!-- Semantic UI css and JS -->
-        <link
-            href="assets/css/semantic.min.css"
-            type="text/css"
-            rel="stylesheet"
-        />
-        <!-- <link
-            href="assets/css/calendar.min.css"
-            type="text/css"
-            rel="stylesheet"
-        /> -->
-        <script src="assets/js/semantic.min.js" type="text/javascript"></script>
-        <!-- <script src="assets/js/calendar.min.js" type="text/javascript"></script> -->
-        
-        <script src="assets/bundle.js"></script>
-    </head>
 
-    <body class="ui container">
-        <div data-section="header" class="ui primary segment"></div>
-        <div class="ui segment">
-            <div class="ui top attached tabular menu">
-                <div class="active item" data-tab="home">
-                    Home
-                </div>
-                <div class="item" data-tab="portfolio">
-                    Portfolio
-                </div>
-                <div class="item" data-tab="resume">Resumé</div>
-            </div>
-            <div class="ui bottom attached active tab segment" data-tab="home">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/ico" />
+    <title>kellyjdavis.com</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=10" />
+    <script type="text/javascript" src="js/combined.bundle.js"></script>
+    <link rel="stylesheet" href="css/combined.css" />
+    <!-- Global site tag (gtag.js) for ${siteUrl} - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112887329-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-112887329-3');
+    </script>
+</head>
+
+<body>
+    <div id="nav" class="uk-navbar-container uk-padding-small"></div>
+    <div>
+        <ul uk-tab>
+            <li class="uk-active"><a href="#">Home</a></li>
+            <li><a>Portfolio</a></li>
+            <li><a>Resumé</a></li>
+        </ul>
+
+        <ul class="uk-switcher">
+            <li class="uk-active">
                 <p class="quoteblock">
-                    Hi! I'm Kelly.<br/><br/> 
-                    I work in traditional server, cloud server and serverless environments using JavaScript, NodeJs/Express and both SQL and NoSQL databases to help you with your application needs.
+                    Hi! I'm Kelly.<br /><br />
+                    I work in traditional server, cloud server and serverless environments using JavaScript,
+                    NodeJs/Express
+                    and both SQL and NoSQL databases to help you with your application needs.
                 </p>
-            </div>
-            <div
-                class="ui bottom attached tab segment"
-                data-tab="portfolio"
-            >
-                <div class="ui fluid cards" data-section="portfolio section">
+            </li>
+            <li>
+                <div id="portfolio" uk-grid class="uk-grid-collapse uk-padding-large uk-width-1-1">
                 </div>
-            </div>
-            <div class="ui bottom attached tab segment" data-tab="resume">
-                <div data-section="resume section"></div>
-            </div>
-        </div>
-        
-    </body>
+            </li>
+            <li id="resume">
+
+            </li>
+        </ul>
+    </div>
+    <script type="text/javascript" src="js/main.bundle.js"></script>
+</body>
+
 </html>

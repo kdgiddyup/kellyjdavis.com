@@ -1,0 +1,162 @@
+@import url(https://fonts.googleapis.com/css?family=Lato|Stylish);
+@import "variables.less";
+// override variables found in node_modules/uikit/src/less/components/
+// below to create a Gulfstream theme
+// Gulfstream colors, fonts, margins, etc,
+// are defined in ./variables.less
+
+/* ******************************
+        COMPONENT OVERRIDES
+******************************** */
+
+// base body
+.hook-base-body() {
+	font-family: @font-family;
+	font-weight: 100;
+}
+
+.uk-light {
+	color: @white;
+}
+
+h1,
+.uk-h1,
+h2,
+.uk-h2,
+h3,
+.uk-h3,
+h4,
+.uk-h4,
+h5,
+.uk-h5,
+h6,
+.uk-h6,
+.uk-heading-small,
+.uk-heading-medium,
+.uk-heading-large,
+.uk-heading-xlarge,
+.uk-heading-2xlarge {
+	font-family: Stylish, "Helvetica Neue", Arial, Helvetica, sans-serif;
+	line-height: 1.28571429em;
+	font-weight: lighter;
+	padding: 0;
+}
+
+// off canvas
+@offcanvas-bar-background: @white;
+@offcanvas-bar-color-mode: dark;
+//overlay
+@overlay-primary-background: fade(@global-primary-background, 80%);
+// cards
+@card-title-font-size: @default-font-size;
+// nav and navbar
+
+nav {
+	height: 100px;
+	& .heading {
+		margin: 0;
+	}
+}
+@navbar-background: @white;
+.uk-navbar-left {
+	& .uk-navbar-toggle,
+	.uk-search-toggle {
+		padding: 0 15px 0 @global-margin;
+		.responsive(@breakpoint-small, {
+            padding: 0 15px 0 @global-large-margin;
+        }
+        );
+	}
+}
+
+.uk-navbar-right {
+	& .uk-navbar-toggle,
+	.uk-search-toggle {
+		padding: 0 @global-margin 0 15px;
+		.responsive(@breakpoint-small, {
+            padding: 0 @global-large-margin 0 15px;
+        }
+        );
+	}
+}
+
+.uk-navbar-toggle {
+	cursor: pointer;
+}
+
+.uk-navbar-nav > li > a {
+	text-transform: unset;
+}
+
+// text-top correction
+.uk-text-top {
+	vertical-align: text-top !important;
+}
+
+// font-weight
+.bold {
+	font-weight: 700;
+}
+
+.bold.heading {
+	font-weight: 700;
+}
+
+// heading styles (sizes are on variables.less)
+.heading {
+	font-family: @font-family-heading;
+	font-weight: 100 !important;
+	text-transform: uppercase;
+}
+
+.hook-heading-small() {
+	font-family: @font-family-heading;
+	font-weight: 100 !important;
+	text-transform: uppercase;
+	color: @black;
+}
+
+.hook-heading-medium() {
+	font-weight: 100 !important;
+	font-family: @font-family-heading;
+	text-transform: uppercase;
+	color: @black;
+}
+
+.hook-heading-large() {
+	font-family: @font-family-heading;
+	font-weight: 100 !important;
+	text-transform: uppercase;
+	color: @black;
+}
+
+.hook-heading-xlarge() {
+	font-family: @font-family-heading;
+	font-weight: 100 !important;
+	text-transform: uppercase;
+	color: @black;
+}
+
+.hook-heading-2xlarge() {
+	font-family: @font-family-heading;
+	font-weight: 100 !important;
+	text-transform: uppercase;
+	color: @black;
+}
+
+svg img:not([src]) {
+	visibility: visible !important;
+}
+// allow <image>-based SVGs to show on IE11
+
+code {
+	font-size: 0.9rem !important;
+	color: @utility-green !important;
+	white-space: normal !important;
+	word-break: break-all;
+	// Non standard for webkit
+	word-break: break-word;
+	& a {
+		color: @utility-green !important;
+	}
+}

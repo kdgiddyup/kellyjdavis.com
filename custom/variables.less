@@ -1,0 +1,116 @@
+// colors
+@black: #000000;
+@gold: #ca8448;
+@peri: #7d98aa;
+@blue: #041c2c;
+@white: #ffffff;
+@slate: #898d8d;
+@sand: #f2f0e3;
+@orange: #c88242;
+@steel: #7a99ac;
+@teal: #7fa9ae;
+@brown: #5b3427;
+@utility-blue: #2663c9;
+@utility-green: #55820c;
+@utility-yellow: #ffb31a;
+@utility-orange: #f07f07;
+@utility-red: #b9252b;
+@grey1: #fafafa;
+@gray1: @grey1;
+@grey2: #f2f3f4;
+@gray2: @grey2;
+@grey3: #e6e8ea;
+@gray3: @grey3;
+@grey4: #ccd1d4;
+@gray4: @grey4;
+@grey5: #b4bbc0;
+@gray5: @grey5;
+@grey6: #9aa4aa;
+@gray6: @grey6;
+@grey7: #818d95;
+@gray7: @grey7;
+@grey8: #687680;
+@gray8: @grey8;
+@grey9: #4f606b;
+@gray9: @grey9;
+@grey10: #364956;
+@gray10: @grey10;
+@grey11: #1d3341;
+@gray11: @grey11;
+@grey12: #050f17;
+@gray12: @grey12;
+// uikit colors
+@global-muted-color: @grey4;
+@global-emphasis-color: @slate;
+@global-link-color: @blue;
+@global-link-hover-color: darken(tint(@blue, 40%), 20%);
+@global-primary-background: @blue;
+@navbar-nav-item-color: @black;
+@global-success-background: @utility-green;
+@global-warning-background: @utility-yellow;
+@global-danger-background: @utility-red;
+@text-primary-color: @blue;
+@text-success-color: @utility-green;
+@text-warning-color: @utility-yellow;
+@text-danger-color: @utility-red;
+@icon-button-color: @grey8;
+@icon-button-background: @white;
+// font families
+@font-family: Lato, "Helvetica Neue", Arial, Helvetica, sans-serif;
+@global-font-family: @font-family;
+@font-family-heading: Stylish, "Helvetica Neue", Arial, Helvetica, sans-serif;
+// browsers typically assume a base font-size of 16px
+@base-font-size: 16px;
+@global-font-size: 16px;
+@navbar-nav-item-font-size: 0.85rem;
+// for simplified font size calculations, set medium displays to 10px
+// each breakpoint above and below will be adjusted accordingly
+@medium-font-size-px: 10;
+@xs-font-size-px: @medium-font-size-px - 3;
+@small-font-size-px: @medium-font-size-px - 2;
+@large-font-size-px: @medium-font-size-px + 2;
+@huge-font-size-px: @medium-font-size-px + 3;
+// set the root em (rem) adjustment value for each display size
+@xs-font-size-adj: (@xs-font-size-px * 1px) / @base-font-size * 100%;
+@small-font-size-adj: (@small-font-size-px * 1px) / @base-font-size * 100%;
+@medium-font-size-adj: (@medium-font-size-px * 1px) / @base-font-size * 100%;
+@large-font-size-adj: (@large-font-size-px * 1px) / @base-font-size * 100%;
+@huge-font-size-adj: (@huge-font-size-px * 1px) / @base-font-size * 100%;
+// when in doubt, set an element's font-size to this
+@default-font-size: 1.3rem;
+// widths
+// override UIKit defaults:
+@breakpoint-small: 769px;
+@breakpoint-medium: 900px;
+@breakpoint-large: 1200px;
+@breakpoint-xlarge: 1800px;
+@breakpoint-ipad-w: 768px;
+@breakpoint-ipad-h: 1024px;
+@breakpoint-ph-h: 375px; // landscape value
+@breakpoint-ph-w: 812px; // landscape value
+@breakpoint-tall: 450px; // legacy
+// margins
+@global-margin: 30px;
+@global-small-margin: 15px;
+@global-medium-margin: 50px;
+@global-large-margin: 70px;
+// paddings
+@global-gutter: 30px;
+@global-small-gutter: 15px;
+@global-medium-gutter: 40px;
+@global-large-gutter: 70px;
+// text sizes
+@global-small-font-size: 0.65rem; // 14px
+// headings
+// sizes
+@heading-small-font-size: @heading-small-font-size-m * 0.85; // sets uk-heading-small
+@heading-medium-font-size-l: 1.4rem; // sets uk-heading-medium
+@heading-large-font-size: @heading-large-font-size-m * 0.95; // sets uk-heading-large
+@heading-xlarge-font-size-l: 4.2rem; // sets uk-heading-xlarge
+@heading-2xlarge-font-size-l: 6.2rem; // sets uk-heading-2xlarge
+// line-heights
+@heading-small-line-height: 1.6;
+@heading-medium-line-height: 1.5;
+@heading-large-line-height: 1.5;
+@heading-xlarge-line-height: 1.4;
+@heading-2xlarge-line-height: 1.4;
