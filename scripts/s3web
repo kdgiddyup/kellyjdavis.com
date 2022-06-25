@@ -9,6 +9,8 @@
 
 # from: https://stackoverflow.com/questions/42789273/bash-choose-default-from-case-when-enter-is-pressed-in-a-select-prompt
 
+export AWS_PROFILE=personal
+
 selectWithDefault() {
 
   local item i=0 numItems=$# 
@@ -56,8 +58,8 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
             printf '%b\n' "\nQuerying AWS for available domains...\n"
 
             # gather domain data via bash command substitution
-            DOMAINS=$(aws route53 list-hosted-zones --query "HostedZones[].Name" --output text --profile personal)
-            ZONEIDS=$(aws route53 list-hosted-zones --query "HostedZones[].Id" --output text --profile personal)
+            DOMAINS=$(aws route53 list-hosted-zones --query "HostedZones[].Name" --output text)
+            ZONEIDS=$(aws route53 list-hosted-zones --query "HostedZones[].Id" --output text)
         
             # create select menu to obtain DOMAIN we're working in
             printf '%b\n' $'\n'"Domain (Enter for \"gulfstream.aero\")?"
@@ -118,7 +120,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
         # return list of available buckets
         printf '%b\n\n'"Select from these available buckets:\n"
         unset DOMAIN 
-        BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text --profile personal)
+        BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text)
         unset opt
         select opt in $BUCKETS; do
             if [ "$opt" ]
@@ -132,7 +134,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
     if [ ! "$REGION" ] 
         then
             printf '%b\n'"\nFetching region for this bucket ...\n"
-            REGION=$(aws s3api get-bucket-location --bucket $BUCKET --output text --profile personal)
+            REGION=$(aws s3api get-bucket-location --bucket $BUCKET --output text)
             if [ "$REGION" = "None" ] 
                 then
                     REGION="us-east-1"
@@ -291,7 +293,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
             if [ ! "$STATUS" ] || [ "$STATUS" = "New" ]
                 then
                     printf '%b\n' $'\n'"Sending request to create bucket \"$BUCKET\""
-                    if ! aws s3 mb s3://$BUCKET --region $REGION --profile personal; 
+                    if ! aws s3 mb s3://$BUCKET --region $REGION; 
                         then 
                             # create-bucket returned error
                             printf '%b\n' $'\n'"Could not create bucket. See output above for info."
@@ -302,7 +304,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
             fi
 
             # send off bucket policy and website config needed to S3 site hosting
-            if aws s3api put-bucket-policy --bucket $BUCKET --policy file://$PWD/s3tmp/policy.json --profile personal; then
+            if aws s3api put-bucket-policy --bucket $BUCKET --policy file://$PWD/s3tmp/policy.json; then
                 # put-bucket-policy succeeded
                 printf '%b\n' $'\n'"Bucket policy sent to AWS ..."
             else
@@ -311,7 +313,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
                 unset OK;
             fi
 
-            if aws s3api put-bucket-website --bucket $BUCKET --website-configuration file://$PWD/s3tmp/webconf.json --profile personal; then
+            if aws s3api put-bucket-website --bucket $BUCKET --website-configuration file://$PWD/s3tmp/webconf.json; then
                 # put-bucket-website succeed
                 printf '%b\n' "Bucket config sent to AWS ..."
             else 
@@ -349,7 +351,7 @@ done
     fi
     printf '%b\n' "\nSent record request to Route 53 to point http://$BUCKET to your bucket ...\n" 
 
-    if aws route53 change-resource-record-sets --hosted-zone-id $RESOURCEID --change-batch file://$PWD/s3tmp/changebatch.json --profile personal; then
+    if aws route53 change-resource-record-sets --hosted-zone-id $RESOURCEID --change-batch file://$PWD/s3tmp/changebatch.json; then
         # route53 config succeeded
         printf '%b\n' "\nThe request succeeded. It might take several minutes for the new domain to resolve.\n" 
     else

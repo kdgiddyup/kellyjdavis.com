@@ -8,6 +8,10 @@ export const resumeData = `<h2>Summary</h2>
                 <p><strong>October 2017-present.</strong> Work with small technical team providing and supporting tools for Marketing and the larger organization, as well as maintain and implement the chief marketing website, <a href="https://gulfstream.com" target="_blank">Gulfstream.com</a>.</p>
                 <table class="ui striped table">
                     <tr>
+                        <td>Other tasks:</td>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
                             Work in webpack/babel/npm environment to build internal tools as single-page applications that help us manage data important to our department and larger business.
                         </td>

@@ -8,6 +8,8 @@
 
 # from: https://stackoverflow.com/questions/42789273/bash-choose-default-from-case-when-enter-is-pressed-in-a-select-prompt
 
+export AWS_PROFILE=personal
+
 selectWithDefault() {
 
   local item i=0 numItems=$# 
@@ -45,7 +47,7 @@ INCOMINGBUCKET=$1
 
 # What buckets are available?
 printf '%b\n' "\nFetching available buckets ...\n"
-BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text --profile personal)
+BUCKETS=$(aws s3api list-buckets --query "Buckets[].Name" --output text)
 
 # process list
 PBUCKETS=""
@@ -204,7 +206,7 @@ until [ "$OK" = 'y' ] || [ "$OK" = "Y" ]; do
 
 
     # generate command
-    SYNCLIVE="aws s3 sync $UPATH s3://$BUCKET/$SUBDIR --acl public-read $INCLUDE $EXCLUDE $DFLAG --profile personal"
+    SYNCLIVE="aws s3 sync $UPATH s3://$BUCKET/$SUBDIR --acl public-read $INCLUDE $EXCLUDE $DFLAG"
     SYNCTEST="$SYNCLIVE --dryrun"
     
     printf '%b\n' "\n\nThis will upload all non-excluded files and directories in the above location to \"$BUCKET/$SUBDIR\" using this command:\n"
@@ -252,7 +254,7 @@ if [ "$PURGE" = "y" ] || [ "$PURGE" = "Y" ]
         printf '%b\n' "\nLooking up CloudFront distribution ID ...\n"
         
         # if there is a distribution ID for this bucket, this command will return it:
-        DISTRIBUTIONID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?@==\`$BUCKET\`]].[Id]" --output text --no-paginate --profile personal)
+        DISTRIBUTIONID=$(aws cloudfront list-distributions --query "DistributionList.Items[?Aliases.Items[?@==\`$BUCKET\`]].[Id]" --output text --no-paginate)
 
         if [ ! "$DISTRIBUTIONID" = "" ] 
             then
@@ -295,7 +297,7 @@ if [ "$PURGE" = "y" ] || [ "$PURGE" = "Y" ]
                     fi
                 done
                 printf '%b\n' "\nSending cache invalidation command for \"$CHECKEDPATHS\" in \"$BUCKET\" ...\n"
-                if  eval "aws cloudfront create-invalidation --distribution-id $DISTRIBUTIONID --paths $CHECKEDPATHS --profile personal"
+                if  eval "aws cloudfront create-invalidation --distribution-id $DISTRIBUTIONID --paths $CHECKEDPATHS"
                     then
                         printf '%b\n' "\nInvalidation command succeeded.\n"
                     else
