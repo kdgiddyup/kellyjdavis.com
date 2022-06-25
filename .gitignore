@@ -1,15 +1,3 @@
-tasks/
-semantic/dist/
-semantic/src/definitions/
-semantic/src/themes/
-semantic/src/site/collections/
-semantic/src/site/modules/
-semantic/src/site/themes/
-semantic/src/site/elements/
-semantic/src/site/views/
-semantic/src/semantic.less
-semantic/src/theme.less
-semantic.json
 node_modules/
 bundle.js
 bundle.js.map
