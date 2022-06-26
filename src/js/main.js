@@ -61,7 +61,7 @@ $(() => {
 		<img src="img/${item.image}">
 		</div>
         <div class="uk-card-header">
-			<h3 class="uk-card-title"><a href="${item.url}" target="_blank" class="header">${item.name}</a></h3>
+			<h3 class="uk-card-title">${item.url ? `<a href="${item.url}" target="_blank" class="header">` : ""}${item.name}${item.url ? `</a>` : ""}</h3>
         </div>
         <div class="uk-card-body content">
             

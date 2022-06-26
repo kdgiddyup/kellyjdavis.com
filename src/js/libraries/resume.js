@@ -223,7 +223,7 @@ export const resumeData = `<h2>Summary</h2>
                     </tr>
                     <tr>
                         <td>
-                            2017: SC Press Association <a href="http://media.islandpacket.com/static/news/hurricanes/matthew2016/timeline.html" target="_blank" data-toggle="tooltip" title="Close calls and regrets: Those who didn't evacuate for Matthew tell us about their night">Digital Feature Project (Hurricane Matthew survivor stories)</a>
+                            2017: SC Press Association Digital Feature Project (Hurricane Matthew survivor stories)
                         </td>
                     </tr>
                     <tr>
